@@ -1,12 +1,6 @@
 name: Generate Documentation Images
 
 on:
-  push:
-    branches:
-      - agent/architecture-council-v1.0.2-cleanup
-    paths:
-      - "scripts/generate-documentation-images.py"
-      - ".github/workflows/generate-doc-images.yml"
   workflow_dispatch:
 
 permissions:
