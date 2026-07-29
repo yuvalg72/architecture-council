@@ -17,6 +17,11 @@ REQUIRED_FILES = {
     "NOTICE.md",
     "agents/openai.yaml",
     "assets/icon.svg",
+    "assets/architecture-council-overview.jpg",
+    "assets/professional-review-panel.jpg",
+    "assets/council-process.jpg",
+    "assets/evidence-and-decision-model.jpg",
+    "assets/outcome-tracking.jpg",
     "LICENSES/council-of-high-intelligence-MIT.txt",
     "references/council-protocol.md",
     "references/reviewer-roles.md",
@@ -25,17 +30,14 @@ REQUIRED_FILES = {
     "references/output-contract.md",
     "references/security-and-provider-policy.md",
     "references/outcome-tracking.md",
-    "references/legacy-lenses.md",
     "references/lessons-learned-integration.md",
     "references/examples.md",
-    "references/source-attribution.md",
     "scripts/validate_decision_dossier.py",
     "scripts/validate_decision_record.py",
     "scripts/validate_skill_bundle.py",
     "tests/test_validators.py",
 }
 PLACEHOLDER_MARKERS = ("TO" + "DO", "example_" + "asset", "api_" + "reference.md")
-
 SECRET_PATTERNS = [
     re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
     re.compile(r"\bAKIA[0-9A-Z]{16}\b"),
@@ -85,8 +87,7 @@ def validate(root: Path) -> list[str]:
             description = frontmatter.get("description", "")
             if len(description) < 180:
                 errors.append("SKILL.md description is too short to provide reliable triggering context")
-            required_triggers = ("architecture council", "duo", "full council", "high-stakes")
-            for trigger in required_triggers:
+            for trigger in ("architecture council", "duo", "full council", "high-stakes"):
                 if trigger.lower() not in description.lower():
                     errors.append(f"SKILL.md description missing trigger context: {trigger}")
             if len(text.splitlines()) > 500:
@@ -116,6 +117,16 @@ def validate(root: Path) -> list[str]:
         except ET.ParseError as exc:
             errors.append(f"invalid SVG icon: {exc}")
 
+    forbidden_terms = (
+        "Council of High Intelligence",
+        "Aristotle",
+        "Socrates",
+        "Sun Tzu",
+        "Machiavelli",
+        "Feynman",
+        "Torvalds",
+        "Lao Tzu",
+    )
     total_size = 0
     for path in root.rglob("*"):
         if path.is_symlink():
@@ -129,6 +140,10 @@ def validate(root: Path) -> list[str]:
             errors.append(f"file exceeds 5 MB: {relative}")
         if path.suffix.lower() in {".md", ".py", ".yaml", ".yml", ".json", ".txt", ".svg"}:
             text = path.read_text(encoding="utf-8")
+            if path.suffix.lower() == ".md":
+                for term in forbidden_terms:
+                    if term in text and path.name != "council-of-high-intelligence-MIT.txt":
+                        errors.append(f"legacy source-project term found in {relative}: {term}")
             if "\u2014" in text:
                 errors.append(f"em dash found in {relative}")
             if any(marker in text for marker in PLACEHOLDER_MARKERS):

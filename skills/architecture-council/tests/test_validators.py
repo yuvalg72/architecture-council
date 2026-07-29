@@ -1,120 +1,33 @@
 #!/usr/bin/env python3
-"""Self-contained tests for Architecture Council validators."""
-
+"""Regression tests for Architecture Council validators."""
 from __future__ import annotations
-
-import json
-import subprocess
-import sys
-import tempfile
+import json,subprocess,sys,tempfile
 from pathlib import Path
-
-ROOT = Path(__file__).resolve().parents[1]
-DOSSIER_VALIDATOR = ROOT / "scripts" / "validate_decision_dossier.py"
-RECORD_VALIDATOR = ROOT / "scripts" / "validate_decision_record.py"
-BUNDLE_VALIDATOR = ROOT / "scripts" / "validate_skill_bundle.py"
-
-
-def run(script: Path, target: Path, expected: int) -> None:
-    result = subprocess.run(
-        [sys.executable, str(script), str(target)],
-        check=False,
-        capture_output=True,
-        text=True,
-    )
-    if result.returncode != expected:
-        raise AssertionError(
-            f"{script.name} returned {result.returncode}, expected {expected}\n"
-            f"stdout:\n{result.stdout}\nstderr:\n{result.stderr}"
-        )
-
-
-def valid_dossier() -> dict:
-    return {
-        "decision_id": "DEC-2026-001",
-        "title": "Select a target architecture",
-        "question": "Which architecture best meets the approved outcome?",
-        "required_outcome": "A supportable and secure target architecture",
-        "options": [
-            {"id": "a", "name": "Option A", "description": "Centralized design"},
-            {"id": "b", "name": "Option B", "description": "Distributed design"},
-        ],
-        "constraints": ["Preserve rollback"],
-        "success_criteria": ["Acceptance tests pass"],
-        "evidence": [
-            {"label": "FACT", "statement": "Current dependency is documented", "source": "approved inventory"},
-            {"label": "INFERENCE", "statement": "Centralization may reduce variation", "source": "current operating data"},
-            {"label": "ASSUMPTION", "statement": "The operating team can support the target", "source": None},
-            {"label": "UNKNOWN", "statement": "Final adoption rate is unknown", "source": None},
-        ],
-        "reversibility": "partially-reversible",
-        "deadline": "2026-08-15",
-        "decision_authority": "Architecture owner",
-        "risk_of_action": ["Migration disruption"],
-        "risk_of_inaction": ["Continued inconsistency"],
-        "sensitivity": "internal",
-        "external_provider_allowed": False,
-        "related_decisions": [],
-        "related_skills": [],
-        "related_lessons": [],
-    }
-
-
-def valid_record() -> dict:
-    return {
-        "decision_id": "DEC-2026-001",
-        "mode": "full",
-        "execution_model": "single-model structured deliberation",
-        "panel": ["strategy", "technical", "delivery", "risk", "operations", "stakeholder"],
-        "domain_weight_seat": "technical",
-        "evidence_summary": {"facts": ["fact"], "inferences": ["inference"], "assumptions": ["assumption"], "unknowns": ["unknown"]},
-        "recommendation": "Proceed with Option A subject to the kill criteria.",
-        "vote_tally": {"a": 4.5, "b": 1.5},
-        "minority_position": "Option B should prevail if operating capacity is not confirmed.",
-        "unresolved_questions": ["Can the operating team support the target?"],
-        "kill_criteria": [
-            {"condition": "Support load exceeds threshold", "measure": "More than 10 incidents", "trigger": "First 30 days", "response": "Pause rollout"}
-        ],
-        "concrete_next_action": "Validate operating capacity against the target support model.",
-        "owner": "Architecture owner",
-        "review_date": "2026-08-15",
-        "reversal_evidence": ["Support capacity is insufficient"],
-        "status": "proposed",
-        "confidence": "medium",
-        "limitations": ["Single-model structured deliberation"],
-    }
-
-
-def main() -> int:
-    with tempfile.TemporaryDirectory() as directory:
-        temp = Path(directory)
-
-        dossier_path = temp / "dossier.json"
-        dossier_path.write_text(json.dumps(valid_dossier(), indent=2), encoding="utf-8")
-        run(DOSSIER_VALIDATOR, dossier_path, 0)
-
-        bad_dossier = valid_dossier()
-        bad_dossier["decision_id"] = "bad"
-        bad_dossier["evidence"][0]["statement"] = "api_key=" + "sk-" + ("a" * 30)
-        bad_dossier_path = temp / "bad-dossier.json"
-        bad_dossier_path.write_text(json.dumps(bad_dossier, indent=2), encoding="utf-8")
-        run(DOSSIER_VALIDATOR, bad_dossier_path, 1)
-
-        record_path = temp / "record.json"
-        record_path.write_text(json.dumps(valid_record(), indent=2), encoding="utf-8")
-        run(RECORD_VALIDATOR, record_path, 0)
-
-        bad_record = valid_record()
-        bad_record["mode"] = "ceremonial"
-        bad_record["kill_criteria"] = [{}]
-        bad_record_path = temp / "bad-record.json"
-        bad_record_path.write_text(json.dumps(bad_record, indent=2), encoding="utf-8")
-        run(RECORD_VALIDATOR, bad_record_path, 1)
-
-    run(BUNDLE_VALIDATOR, ROOT, 0)
-    print("All Architecture Council validator tests passed.")
-    return 0
-
-
-if __name__ == "__main__":
-    raise SystemExit(main())
+ROOT=Path(__file__).resolve().parents[1]; D=ROOT/'scripts'/'validate_decision_dossier.py'; R=ROOT/'scripts'/'validate_decision_record.py'; B=ROOT/'scripts'/'validate_skill_bundle.py'
+def run(script,target,expected):
+    x=subprocess.run([sys.executable,str(script),str(target)],capture_output=True,text=True)
+    if x.returncode!=expected:raise AssertionError(f"{script.name}: {x.returncode}!={expected}\n{x.stdout}\n{x.stderr}")
+def dossier():
+ return {'decision_id':'DEC-2026-001','title':'Select target architecture','question':'Which option?','required_outcome':'Supportable secure architecture','options':[{'id':'a','name':'A','description':'Centralized'},{'id':'b','name':'B','description':'Distributed'}],'constraints':['Rollback required'],'success_criteria':['Acceptance tests pass'],'evidence':[{'label':'FACT','statement':'Inventory approved','source':'inventory'},{'label':'INFERENCE','statement':'A reduces variation','source':'operating data'},{'label':'ASSUMPTION','statement':'Team can support A','source':None},{'label':'UNKNOWN','statement':'Adoption rate unknown','source':None}],'no_material_unknowns':False,'reversibility':'partially-reversible','deadline':'2026-08-15','decision_authority':'Architecture owner','risk_of_action':['Disruption'],'risk_of_inaction':['Inconsistency'],'sensitivity':'internal','external_provider_allowed':False,'external_provider_approval':None,'related_decisions':[],'related_skills':[],'related_lessons':[]}
+def record():
+ return {'decision_id':'DEC-2026-001','result':'recommended','recommended_option':'a','decision_authority':'Architecture owner','mode':'full','execution_model':'single-model structured deliberation','panel':['strategy','technical','delivery','risk','operations','stakeholder'],'domain_weight_seat':'technical','reviewer_stances':[{'reviewer':'strategy','option':'a','confidence':'high','dealbreaker':'ROI fails'},{'reviewer':'technical','option':'a','confidence':'high','dealbreaker':'Security fails'},{'reviewer':'delivery','option':'a','confidence':'high','dealbreaker':'No rollback'},{'reviewer':'risk','option':'a','confidence':'medium','dealbreaker':'Control fails'},{'reviewer':'operations','option':'b','confidence':'medium','dealbreaker':'Support load high'},{'reviewer':'stakeholder','option':'a','confidence':'medium','dealbreaker':'Customer rejects'}],'evidence_summary':{'facts':['fact'],'inferences':['inference'],'assumptions':['assumption'],'unknowns':['unknown']},'recommendation':'Proceed with A.','rationale':['Secure','Supportable'],'acceptable_compromises':['Phased rollout'],'vote_tally':{'a':5.0,'b':0.75},'minority_position':'Choose B if support capacity fails.','unresolved_questions':['Final support capacity'],'kill_criteria':[{'condition':'Support load exceeds threshold','measure':'More than 10 incidents','trigger':'First 30 days','response':'Pause rollout','decision_authority':'Architecture owner'}],'concrete_next_action':'Validate operating capacity against the target support model.','implementation_action':'Run a controlled pilot.','owner':'Architecture owner','due_or_trigger':'Before production approval','prediction':'A will reduce variation without breaching support thresholds.','review_date':'2026-08-15','review_condition':None,'success_evidence':['Acceptance tests pass'],'reversal_evidence':['Support capacity is insufficient'],'expected_cost_of_reversal':'One maintenance window and rollback effort.','status':'proposed','confidence':'medium','limitations':['Single-model structured deliberation']}
+def main():
+ with tempfile.TemporaryDirectory() as td:
+  p=Path(td); cases=[(D,dossier(),0,'valid dossier')]
+  for key in ['success_criteria','deadline','related_decisions','related_skills','related_lessons','no_material_unknowns','external_provider_approval']:
+   x=dossier();x.pop(key);cases.append((D,x,1,f'missing {key}'))
+  x=dossier();x['deadline']='15/08/2026';cases.append((D,x,1,'bad deadline'))
+  x=dossier();x['evidence']=[i for i in x['evidence'] if i['label']!='UNKNOWN'];cases.append((D,x,1,'unknown missing'))
+  x=dossier();x['sensitivity']='restricted';x['external_provider_allowed']=True;cases.append((D,x,1,'missing provider approval'))
+  cases.append((R,record(),0,'valid record'))
+  for key in ['result','recommended_option','decision_authority','acceptable_compromises','prediction','implementation_action','success_evidence','expected_cost_of_reversal','review_date']:
+   x=record();x.pop(key);cases.append((R,x,1,f'missing {key}'))
+  x=record();x['vote_tally']={};cases.append((R,x,1,'empty tally'))
+  x=record();x['vote_tally']={'a':999,'b':0};cases.append((R,x,1,'incorrect tally'))
+  x=record();x['domain_weight_seat']='chair';cases.append((R,x,1,'seat not panel'))
+  x=record();x['result']='split';cases.append((R,x,1,'split despite threshold'))
+  x=record();x['evidence_summary']={'facts':[],'inferences':[],'assumptions':[],'unknowns':[]};cases.append((R,x,1,'empty evidence'))
+  for idx,(s,obj,code,name) in enumerate(cases):
+   f=p/f'{idx}.json';f.write_text(json.dumps(obj,indent=2),encoding='utf-8');run(s,f,code)
+ run(B,ROOT,0);print(f'All {len(cases)} Architecture Council validator tests passed.');return 0
+if __name__=='__main__':raise SystemExit(main())
