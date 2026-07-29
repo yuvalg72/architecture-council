@@ -1,33 +1,16 @@
 # Contributing
 
-Thanks for contributing to Council of High Intelligence.
+Architecture Council is maintained as a native ChatGPT Skill.
 
-## Development flow
+## Requirements
 
-1. Sync main:
-   - `git checkout main`
-   - `git pull origin main`
-2. Create a feature branch:
-   - `git checkout -b feat/your-change`
-3. Make changes and validate:
-   - `shellcheck install.sh` (for installer changes)
-   - `./install.sh --dry-run`
-   - `./scripts/council-simulation-checklist.sh`
-4. Commit with a clear message and open a PR to `main`.
-
-## Branch cleanup after merge
-
-If a merged branch still appears in your local remote-tracking list, prune stale refs:
-
-- `git fetch origin --prune`
-
-To remove a merged local branch:
-
-- `git branch -d feat/your-change`
-
-## Style notes
-
-- Keep docs and installer behavior in sync.
-- Prefer explicit error handling and clear user-facing output in scripts.
-- Avoid hardcoded counts when files can be discovered dynamically.
-- Keep `demos/session-pack.md` aligned with active profiles and triads.
+1. Start from the latest `main` branch.
+2. Keep `skills/architecture-council/SKILL.md` concise and below 500 lines.
+3. Put detailed protocols in `references/`.
+4. Update `VERSION` and both changelogs for material changes.
+5. Test every changed script.
+6. Run `python scripts/build-chatgpt-skill.py`.
+7. Verify `dist/skill.zip` after the final source change.
+8. Preserve the MIT license.
+9. Use professional reviewer roles only.
+10. Do not publish secrets, customer configurations, or unapproved internal material.
