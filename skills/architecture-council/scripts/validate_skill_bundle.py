@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import ast
+import hashlib
 import re
 import sys
 import xml.etree.ElementTree as ET
@@ -38,12 +39,46 @@ REQUIRED_FILES = {
     "tests/test_validators.py",
 }
 PLACEHOLDER_MARKERS = ("TO" + "DO", "example_" + "asset", "api_" + "reference.md")
+JPEG_FILES = (
+    "assets/architecture-council-overview.jpg",
+    "assets/professional-review-panel.jpg",
+    "assets/council-process.jpg",
+    "assets/evidence-and-decision-model.jpg",
+    "assets/outcome-tracking.jpg",
+)
 SECRET_PATTERNS = [
     re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
     re.compile(r"\bAKIA[0-9A-Z]{16}\b"),
     re.compile(r"\bgh[pousr]_[A-Za-z0-9_]{20,}\b"),
     re.compile(r"\bsk-[A-Za-z0-9_-]{20,}\b"),
 ]
+
+
+def jpeg_dimensions(data: bytes) -> tuple[int, int] | None:
+    if len(data) < 4 or data[:2] != b"\xff\xd8" or data[-2:] != b"\xff\xd9":
+        return None
+    index = 2
+    while index + 9 < len(data):
+        if data[index] != 0xFF:
+            index += 1
+            continue
+        marker = data[index + 1]
+        index += 2
+        if marker in {0xD8, 0xD9}:
+            continue
+        if index + 2 > len(data):
+            return None
+        length = int.from_bytes(data[index:index + 2], "big")
+        if length < 2 or index + length > len(data):
+            return None
+        if marker in {0xC0, 0xC1, 0xC2, 0xC3, 0xC5, 0xC6, 0xC7, 0xC9, 0xCA, 0xCB, 0xCD, 0xCE, 0xCF}:
+            if length < 7:
+                return None
+            height = int.from_bytes(data[index + 3:index + 5], "big")
+            width = int.from_bytes(data[index + 5:index + 7], "big")
+            return width, height
+        index += length
+    return None
 
 
 def parse_frontmatter(text: str) -> tuple[dict[str, str], str]:
@@ -61,7 +96,7 @@ def parse_frontmatter(text: str) -> tuple[dict[str, str], str]:
             raise ValueError(f"invalid frontmatter line: {line}")
         key, value = line.split(":", 1)
         fields[key.strip()] = value.strip().strip('"')
-    return fields, text[end + 5 :]
+    return fields, text[end + 5:]
 
 
 def validate(root: Path) -> list[str]:
@@ -117,8 +152,28 @@ def validate(root: Path) -> list[str]:
         except ET.ParseError as exc:
             errors.append(f"invalid SVG icon: {exc}")
 
+    image_digests: dict[str, str] = {}
+    for relative in JPEG_FILES:
+        path = root / relative
+        if not path.is_file():
+            continue
+        data = path.read_bytes()
+        dimensions = jpeg_dimensions(data)
+        if dimensions is None:
+            errors.append(f"invalid JPEG asset: {relative}")
+            continue
+        width, height = dimensions
+        if width < 500 or height < 300:
+            errors.append(f"JPEG asset is too small: {relative} ({width}x{height})")
+        if len(data) < 50000:
+            errors.append(f"JPEG asset appears incomplete: {relative} ({len(data)} bytes)")
+        digest = hashlib.sha256(data).hexdigest()
+        if digest in image_digests:
+            errors.append(f"duplicate JPEG content: {relative} and {image_digests[digest]}")
+        image_digests[digest] = relative
+
     forbidden_terms = (
-        "Council of High Intelligence",
+        "Council" + " of High Intelligence",
         "Aristotle",
         "Socrates",
         "Sun Tzu",
