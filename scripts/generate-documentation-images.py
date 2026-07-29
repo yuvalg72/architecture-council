@@ -1,50 +1,27 @@
 #!/usr/bin/env python3
-"""Generate Architecture Council documentation JPEGs."""
+"""Generate clear baseline JPEG documentation assets for Architecture Council."""
 from __future__ import annotations
 
-import random
 from pathlib import Path
-from PIL import Image, ImageDraw, ImageFont, ImageFilter
+from PIL import Image, ImageDraw, ImageFont
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "skills" / "architecture-council" / "assets"
 W, H = 1600, 900
-INK = (49, 37, 25)
-ACCENT = (110, 54, 44)
-GOLD = (126, 96, 45)
-PAPER = (232, 215, 179)
-PANEL = (239, 226, 196)
+BG = (247, 244, 236)
+CARD = (255, 252, 244)
+INK = (31, 41, 55)
+BLUE = (26, 95, 160)
+GOLD = (160, 119, 48)
+MUTED = (86, 96, 110)
 
 
 def font(size: int, bold: bool = False) -> ImageFont.FreeTypeFont:
-    return ImageFont.truetype("DejaVuSerif-Bold.ttf" if bold else "DejaVuSerif.ttf", size)
+    name = "DejaVuSans-Bold.ttf" if bold else "DejaVuSans.ttf"
+    return ImageFont.truetype(name, size)
 
 
-def parchment() -> Image.Image:
-    rng = random.Random(42)
-    image = Image.new("RGB", (W, H), PAPER)
-    pixels = image.load()
-    for y in range(H):
-        for x in range(W):
-            edge = min(x, y, W - 1 - x, H - 1 - y)
-            shade = max(0, 28 - edge) * 2
-            noise = rng.randint(-7, 7)
-            pixels[x, y] = tuple(max(0, min(255, value + noise - shade)) for value in PAPER)
-    return image.filter(ImageFilter.GaussianBlur(0.35))
-
-
-def frame(draw: ImageDraw.ImageDraw, box: tuple[int, int, int, int], width: int = 5) -> None:
-    draw.rounded_rectangle(box, radius=14, fill=PANEL, outline=INK, width=width)
-    draw.rounded_rectangle((box[0]+9, box[1]+9, box[2]-9, box[3]-9), radius=10, outline=GOLD, width=2)
-
-
-def centered(draw: ImageDraw.ImageDraw, text: str, y: int, size: int, bold: bool = False, fill=INK) -> None:
-    selected = font(size, bold)
-    bounds = draw.textbbox((0, 0), text, font=selected)
-    draw.text(((W - (bounds[2] - bounds[0])) / 2, y), text, font=selected, fill=fill)
-
-
-def wrapped(draw: ImageDraw.ImageDraw, text: str, width: int, selected: ImageFont.FreeTypeFont) -> list[str]:
+def wrap(draw: ImageDraw.ImageDraw, text: str, width: int, selected: ImageFont.FreeTypeFont) -> list[str]:
     lines: list[str] = []
     current = ""
     for word in text.split():
@@ -60,141 +37,150 @@ def wrapped(draw: ImageDraw.ImageDraw, text: str, width: int, selected: ImageFon
     return lines
 
 
-def paragraph(draw: ImageDraw.ImageDraw, text: str, box: tuple[int, int, int, int], size: int = 24, bold: bool = False, left: bool = False) -> None:
+def text_box(draw: ImageDraw.ImageDraw, text: str, box: tuple[int, int, int, int], size: int, *, bold: bool = False, center: bool = False, fill=INK) -> None:
     selected = font(size, bold)
-    lines = wrapped(draw, text, box[2] - box[0], selected)
-    height = size + 8
-    y = box[1] + max(0, (box[3] - box[1] - len(lines) * height) // 2)
+    lines = wrap(draw, text, box[2] - box[0], selected)
+    line_height = size + 8
+    y = box[1]
     for line in lines:
-        x = box[0] if left else box[0] + ((box[2] - box[0]) - draw.textlength(line, font=selected)) / 2
-        draw.text((x, y), line, font=selected, fill=INK)
-        y += height
+        x = box[0]
+        if center:
+            x += ((box[2] - box[0]) - draw.textlength(line, font=selected)) / 2
+        draw.text((x, y), line, font=selected, fill=fill)
+        y += line_height
 
 
-def seal(draw: ImageDraw.ImageDraw, x: int, y: int, label: str) -> None:
-    draw.ellipse((x-42, y-42, x+42, y+42), fill=(214, 191, 143), outline=INK, width=4)
-    selected = font(28, True)
-    bounds = draw.textbbox((0, 0), label, font=selected)
-    draw.text((x-(bounds[2]-bounds[0])/2, y-(bounds[3]-bounds[1])/2-4), label, font=selected, fill=ACCENT)
+def canvas(title: str, subtitle: str) -> tuple[Image.Image, ImageDraw.ImageDraw]:
+    image = Image.new("RGB", (W, H), BG)
+    draw = ImageDraw.Draw(image)
+    draw.rectangle((0, 0, W, 132), fill=(255, 255, 255))
+    draw.line((55, 118, W - 55, 118), fill=(205, 211, 220), width=2)
+    text_box(draw, title, (55, 28, W - 55, 82), 46, bold=True, fill=INK)
+    text_box(draw, subtitle, (55, 84, W - 55, 116), 22, fill=MUTED)
+    return image, draw
+
+
+def card(draw: ImageDraw.ImageDraw, box: tuple[int, int, int, int], title: str, body: str, number: str | None = None) -> None:
+    draw.rounded_rectangle(box, radius=18, fill=CARD, outline=(190, 177, 149), width=3)
+    x1, y1, x2, y2 = box
+    if number:
+        draw.ellipse((x1 + 20, y1 + 20, x1 + 78, y1 + 78), fill=BLUE)
+        text_box(draw, number, (x1 + 20, y1 + 29, x1 + 78, y1 + 68), 25, bold=True, center=True, fill=(255, 255, 255))
+        title_x = x1 + 94
+    else:
+        title_x = x1 + 28
+    text_box(draw, title, (title_x, y1 + 22, x2 - 24, y1 + 92), 25, bold=True)
+    text_box(draw, body, (x1 + 28, y1 + 105, x2 - 28, y2 - 22), 19, fill=MUTED)
 
 
 def save(image: Image.Image, name: str) -> None:
     OUT.mkdir(parents=True, exist_ok=True)
-    image.save(OUT / name, "JPEG", quality=94, optimize=True, progressive=True)
-
-
-def make_overview() -> None:
-    image = parchment(); draw = ImageDraw.Draw(image)
-    centered(draw, "Architecture Council", 36, 56, True)
-    centered(draw, "Executive and architecture decision framework", 105, 27, False, ACCENT)
-    frame(draw, (65, 175, 1535, 330))
-    paragraph(draw, "Six professional reviewers examine strategy, technology, delivery, governance, operations, and stakeholder impact. The Independent Chairman synthesizes only and does not vote.", (115, 200, 1485, 305), 28)
-    sections = [
-        ("1. Dossier", "Define the decision, options, evidence, authority, risk, and success criteria."),
-        ("2. Independent review", "Generate opening positions before reviewers see one another's conclusions."),
-        ("3. Productive challenge", "Expose assumptions, blind spots, and genuine disagreement."),
-        ("4. Weighted verdict", "Apply confidence factors and preserve minority positions."),
-        ("5. Outcome checkpoint", "Assign an owner, prediction, review date, evidence, and kill criteria."),
-    ]
-    for index, (title, description) in enumerate(sections):
-        column, row = index % 3, index // 3
-        x, y = 65 + column * 500, 385 + row * 205
-        frame(draw, (x, y, x + 455, y + 170))
-        paragraph(draw, title, (x+25, y+18, x+430, y+68), 27, True, True)
-        paragraph(draw, description, (x+25, y+70, x+430, y+150), 19, False, True)
-    frame(draw, (565, 770, 1035, 850))
-    paragraph(draw, "One decision record. One owner. One next action.", (595, 785, 1005, 835), 24, True)
-    save(image, "architecture-council-overview.jpg")
+    target = OUT / name
+    image.save(target, "JPEG", quality=94, optimize=True, progressive=False, subsampling=0)
+    with Image.open(target) as check:
+        check.verify()
 
 
 def make_panel() -> None:
-    image = parchment(); draw = ImageDraw.Draw(image)
-    centered(draw, "Architecture Council - Professional Review Panel", 38, 46, True)
-    centered(draw, "Useful friction through complementary professional lenses", 98, 25, False, ACCENT)
+    image, draw = canvas(
+        "Architecture Council - Professional Review Panel",
+        "Professional decision lenses replace historical characters and theatrical personas.",
+    )
     roles = [
         ("Strategic and Business Reviewer", "Business value, priorities, strategic alignment, opportunity cost, and long-term impact."),
         ("Technical and Security Architect", "Technical correctness, security, resilience, supportability, lifecycle, and technical debt."),
         ("Delivery and PMO Reviewer", "Scope, dependencies, ownership, sequencing, timeline, acceptance, rollback readiness, and closure."),
-        ("Risk and Governance Reviewer", "Risk, compliance, auditability, decision rights, controls, residual exposure, and rollback governance."),
+        ("Risk and Governance Reviewer", "Risk, compliance, auditability, decision rights, residual exposure, and rollback governance."),
         ("Operational Simplicity Reviewer", "Practicality, maintainability, supportability, clarity, and unnecessary complexity."),
         ("Customer and Stakeholder Reviewer", "Customer impact, communication, commitments, responsibility split, usability, and alignment."),
     ]
-    for index, (title, description) in enumerate(roles):
-        row, column = divmod(index, 3)
-        x, y = 55 + column * 515, 155 + row * 300
-        frame(draw, (x, y, x + 470, y + 270))
-        seal(draw, x + 68, y + 72, str(index + 1))
-        paragraph(draw, title, (x+125, y+25, x+445, y+110), 27, True, True)
-        paragraph(draw, description, (x+35, y+125, x+435, y+245), 20, False, True)
-    frame(draw, (400, 760, 1200, 855))
-    seal(draw, 465, 807, "7")
-    paragraph(draw, "Independent Chairman - Synthesis Only", (535, 770, 1170, 810), 29, True, True)
-    paragraph(draw, "Verifies the weighted tally, preserves dissent, defines kill criteria, and issues one immediate next action.", (535, 808, 1170, 850), 18, False, True)
+    for index, (title, body) in enumerate(roles):
+        row, col = divmod(index, 3)
+        x = 55 + col * 510
+        y = 165 + row * 280
+        card(draw, (x, y, x + 470, y + 245), title, body, str(index + 1))
+    draw.rounded_rectangle((335, 742, 1265, 852), radius=20, fill=(239, 230, 204), outline=GOLD, width=4)
+    text_box(draw, "7. Independent Chairman - Synthesis Only", (370, 760, 1235, 800), 28, bold=True, center=True)
+    text_box(draw, "Verifies the tally, preserves dissent, defines kill criteria, and issues one immediate next action. The Chairman does not vote.", (385, 807, 1220, 842), 18, center=True, fill=MUTED)
     save(image, "professional-review-panel.jpg")
 
 
 def make_process() -> None:
-    image = parchment(); draw = ImageDraw.Draw(image)
-    centered(draw, "Architecture Council - Deliberation Process", 38, 46, True)
-    centered(draw, "Select the smallest mode that can still change the decision", 98, 25, False, ACCENT)
+    image, draw = canvas("Architecture Council - Deliberation Process", "Use the smallest mode that can expose a decision-changing disagreement.")
     steps = [
-        "Ground the decision with a validated dossier",
-        "Select mode and panel before positions exist",
+        "Validate the Decision Dossier",
+        "Select mode and reviewers before positions exist",
         "Produce independent opening positions",
         "Challenge assumptions and require self-correction",
         "Calculate confidence-weighted support",
         "Chairman synthesizes dissent, kill criteria, and one action",
     ]
     for index, step in enumerate(steps):
-        y = 160 + index * 110
-        seal(draw, 125, y + 35, str(index + 1))
-        frame(draw, (200, y - 8, 1485, y + 78), 4)
-        paragraph(draw, step, (235, y, 1450, y + 70), 27, False, True)
-        if index < len(steps) - 1:
-            draw.line((125, y + 77, 125, y + 102), fill=INK, width=5)
-    paragraph(draw, "Quick Council: 3 reviewers | Duo Review: 2 opposing lenses | Full Council: 6 reviewers + Chairman", (120, 820, 1480, 875), 23, True)
+        y = 160 + index * 105
+        card(draw, (100, y, 1500, y + 82), step, "", str(index + 1))
+    text_box(draw, "Quick Council: 3 reviewers   |   Duo Review: 2 opposing lenses   |   Full Council: 6 reviewers plus Chairman", (100, 815, 1500, 855), 22, bold=True, center=True, fill=BLUE)
     save(image, "council-process.jpg")
 
 
 def make_evidence() -> None:
-    image = parchment(); draw = ImageDraw.Draw(image)
-    centered(draw, "Evidence and Decision Quality Model", 38, 46, True)
-    centered(draw, "Separate what is known from what is believed before debate begins", 98, 25, False, ACCENT)
+    image, draw = canvas("Evidence and Decision Quality Model", "Label evidence before deliberation and do not manufacture consensus.")
     labels = [
         ("FACT", "Directly observed or verified."),
         ("INFERENCE", "A logical interpretation of facts."),
-        ("ASSUMPTION", "Required for the argument but not verified."),
+        ("ASSUMPTION", "Believed to be true but not verified."),
         ("UNKNOWN", "Missing information that could change the decision."),
     ]
-    for index, (name, description) in enumerate(labels):
-        y = 175 + index * 145
-        frame(draw, (70, y, 760, y + 115))
-        seal(draw, 140, y + 58, str(index + 1))
-        paragraph(draw, name, (200, y+10, 410, y+60), 30, True, True)
-        paragraph(draw, description, (200, y+58, 725, y+105), 20, False, True)
-    frame(draw, (840, 175, 1530, 720))
-    paragraph(draw, "Weighted Decision Rule", (900, 205, 1470, 270), 34, True)
-    paragraph(draw, "Every reviewer starts with a base weight of 1.0. One preselected domain seat may receive 1.5. Confidence factors are high 1.00, medium 0.75, and low 0.50.", (900, 290, 1470, 470), 24, False, True)
-    paragraph(draw, "A recommendation requires at least two-thirds of total possible base weight. Otherwise return a split decision and preserve the strongest minority position.", (900, 500, 1470, 680), 25, True, True)
-    paragraph(draw, "Do not manufacture consensus.", (420, 785, 1180, 850), 31, True)
+    for index, (title, body) in enumerate(labels):
+        y = 165 + index * 150
+        card(draw, (65, y, 760, y + 120), title, body, str(index + 1))
+    draw.rounded_rectangle((830, 165, 1535, 765), radius=20, fill=CARD, outline=(190, 177, 149), width=3)
+    text_box(draw, "Weighted Decision Rule", (880, 205, 1485, 255), 34, bold=True, center=True)
+    text_box(draw, "Base weight", (885, 305, 1115, 345), 25, bold=True, center=True, fill=BLUE)
+    text_box(draw, "Every reviewer starts at 1.0", (875, 355, 1125, 415), 20, center=True, fill=MUTED)
+    text_box(draw, "Domain seat", (1240, 305, 1470, 345), 25, bold=True, center=True, fill=BLUE)
+    text_box(draw, "One preselected reviewer may receive 1.5", (1220, 355, 1490, 435), 20, center=True, fill=MUTED)
+    draw.line((1120, 465, 1240, 465), fill=GOLD, width=5)
+    text_box(draw, "Recommendation threshold", (920, 505, 1445, 550), 28, bold=True, center=True)
+    text_box(draw, "At least two-thirds of total possible base weight", (925, 570, 1440, 640), 24, center=True, fill=MUTED)
+    text_box(draw, "Otherwise return a Split Decision and preserve the minority position.", (900, 675, 1465, 735), 22, bold=True, center=True)
     save(image, "evidence-and-decision-model.jpg")
 
 
 def make_outcome() -> None:
-    image = parchment(); draw = ImageDraw.Draw(image)
-    centered(draw, "A Verdict Is a Hypothesis with a Review Date", 38, 46, True)
-    centered(draw, "Record what would change the recommendation before acting", 98, 25, False, ACCENT)
+    image, draw = canvas("A Verdict Is a Hypothesis with a Review Date", "Record what would change the recommendation before acting.")
     fields = ["Decision", "Recommendation", "Prediction", "Owner", "Review checkpoint", "Success evidence", "Reversal evidence", "Kill criteria"]
-    for index, name in enumerate(fields):
-        row, column = divmod(index, 2)
-        x, y = 70 + column * 780, 170 + row * 145
-        frame(draw, (x, y, x + 700, y + 110))
-        paragraph(draw, name, (x+35, y+15, x+665, y+95), 27, True, True)
-    for index, state in enumerate(("CONFIRMED", "REVISED", "REVERSED", "INCONCLUSIVE")):
-        x = 70 + index * 380
-        frame(draw, (x, 770, x + 330, 845))
-        paragraph(draw, state, (x+15, 780, x+315, 835), 23, True)
+    for index, title in enumerate(fields):
+        row, col = divmod(index, 2)
+        x = 65 + col * 770
+        y = 160 + row * 145
+        card(draw, (x, y, x + 700, y + 112), title, "")
+    states = ["CONFIRMED", "REVISED", "REVERSED", "INCONCLUSIVE"]
+    for index, state in enumerate(states):
+        x = 65 + index * 380
+        draw.rounded_rectangle((x, 770, x + 330, 842), radius=16, fill=(239, 230, 204), outline=GOLD, width=3)
+        text_box(draw, state, (x + 15, 790, x + 315, 828), 23, bold=True, center=True)
     save(image, "outcome-tracking.jpg")
+
+
+def make_overview() -> None:
+    image, draw = canvas("Architecture Council", "A professional executive and architecture decision framework.")
+    text_box(draw, "Six professional reviewers examine strategy, technology, delivery, governance, operations, and stakeholder impact. The Independent Chairman synthesizes only and does not vote.", (90, 165, 1510, 245), 27, center=True)
+    sections = [
+        ("1. Decision Dossier", "Define the decision, options, constraints, evidence, authority, risk, and success criteria."),
+        ("2. Independent Review", "Generate opening positions before reviewers see one another's conclusions."),
+        ("3. Productive Challenge", "Expose assumptions, blind spots, and genuine disagreement."),
+        ("4. Weighted Verdict", "Apply confidence factors and preserve minority positions."),
+        ("5. Outcome Checkpoint", "Assign an owner, prediction, review date, evidence, and kill criteria."),
+    ]
+    for index, (title, body) in enumerate(sections):
+        col = index % 3
+        row = index // 3
+        x = 65 + col * 510
+        y = 300 + row * 245
+        card(draw, (x, y, x + 470, y + 205), title, body)
+    draw.rounded_rectangle((390, 790, 1210, 850), radius=16, fill=BLUE)
+    text_box(draw, "One decision record. One owner. One next action.", (420, 805, 1180, 840), 25, bold=True, center=True, fill=(255, 255, 255))
+    save(image, "architecture-council-overview.jpg")
 
 
 def main() -> int:
@@ -203,8 +189,9 @@ def main() -> int:
     make_process()
     make_evidence()
     make_outcome()
-    print(f"Generated documentation images in {OUT}")
+    print(f"Generated baseline JPEG documentation images in {OUT}")
     return 0
+
 
 if __name__ == "__main__":
     raise SystemExit(main())
