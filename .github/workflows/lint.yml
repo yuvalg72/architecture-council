@@ -1,4 +1,4 @@
-name: Lint
+name: Repository Validation
 
 on:
   push:
@@ -26,6 +26,9 @@ jobs:
         run: |
           markdownlint --config .markdownlint.json \
             README.md CONTRIBUTING.md CHANGELOG.md CHATGPT.md SECURITY.md \
+            ".github/**/*.md" \
             "skills/architecture-council/**/*.md"
+      - name: Validate repository
+        run: python scripts/validate-repository.py
       - name: Validate and package Skill
         run: python scripts/build-chatgpt-skill.py

@@ -1,4 +1,4 @@
-name: Release
+name: Release Skill
 
 on:
   push:
@@ -15,33 +15,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Build release tarball
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Validate repository and build Skill
         run: |
-          VERSION="${GITHUB_REF_NAME}"
-          ARCHIVE="council-of-high-intelligence-${VERSION}.tar.gz"
-          tar --exclude='./.git' \
-              --exclude='./.github' \
-              --exclude='./demos' \
-              --exclude='.DS_Store' \
-              --exclude='./.gstack' \
-              --exclude='*.log' \
-              -czf "../${ARCHIVE}" .
-          echo "ARCHIVE=$(pwd)/../${ARCHIVE}" >> "$GITHUB_ENV"
-
-      - name: Extract release notes from CHANGELOG.md
-        # Notes go through a file, never through ${{ }} interpolation into a
-        # run script — CHANGELOG text contains backticks, which the shell
-        # would execute as command substitutions (this bit v1.2.0).
-        run: |
-          VERSION="${GITHUB_REF_NAME#v}"
-          awk "/^## \[${VERSION}\]/{found=1; next} found && /^## /{exit} found{print}" CHANGELOG.md > "${RUNNER_TEMP}/release-notes.md"
-
+          python scripts/validate-repository.py
+          python scripts/build-chatgpt-skill.py
       - name: Create GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          awk "/^## \\[${VERSION}\\]/{found=1; next} found && /^## /{exit} found{print}" CHANGELOG.md > "${RUNNER_TEMP}/release-notes.md"
           gh release create "${GITHUB_REF_NAME}" \
-            --title "${GITHUB_REF_NAME}" \
+            --title "Architecture Council ${GITHUB_REF_NAME}" \
             --notes-file "${RUNNER_TEMP}/release-notes.md" \
-            "${ARCHIVE}"
+            dist/skill.zip

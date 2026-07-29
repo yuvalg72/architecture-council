@@ -1,25 +1,26 @@
 ---
 name: Feature request
-about: Propose a protocol enhancement, new persona, or new capability
+about: Propose a decision-quality, governance, or validation improvement
 title: "feat: "
 labels: enhancement
 ---
 
-## The problem or opportunity
+## Problem or opportunity
 
-<!-- What can't you do today, or what evidence suggests the protocol could be better? -->
+Describe the decision-quality gap or workflow limitation.
 
 ## Proposed change
 
-<!-- What should change? Protocol changes land in SKILL.md first, then get mirrored into SKILL.codex.md and SKILL.gemini.md — say if your proposal is host-specific. -->
+State the specific Skill, reference, validator, test, or documentation change.
 
-## Evidence (encouraged)
+## Evidence
 
-<!-- This project prefers research-backed protocol changes — link papers, benchmarks, or reproducible observations if you have them. See issue #28 for the running literature tracker. -->
+Provide verified outcomes, reproducible observations, or authoritative guidance that supports the change.
 
 ## Scope
 
-- [ ] Affects `SKILL.md` (Claude coordinator)
-- [ ] Affects `SKILL.codex.md` / `SKILL.gemini.md` mirrors
-- [ ] Affects agent personas (`agents/`)
-- [ ] Affects installer / scripts / configs
+- [ ] `SKILL.md`
+- [ ] Reference contract
+- [ ] Validator or tests
+- [ ] Packaging or CI
+- [ ] Documentation or images

@@ -5,6 +5,7 @@ The authoritative implementation is `skills/architecture-council/`.
 ## Build
 
 ```bash
+python scripts/validate-repository.py
 python scripts/build-chatgpt-skill.py
 ```
 
@@ -12,7 +13,7 @@ python scripts/build-chatgpt-skill.py
 
 - Internal name: `architecture-council`
 - Display name: `Architecture Council`
-- Version: `1.0.1`
+- Version: `1.0.2`
 - Package: `dist/skill.zip`
 
-Do not claim installation or version parity without verifying the installed Skill and the GitHub source.
+Do not claim installation or version parity without verifying the installed Skill and the exact GitHub source.
