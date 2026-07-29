@@ -1,0 +1,40 @@
+name: Export audit snapshot
+
+on:
+  push:
+    branches:
+      - agent/architecture-council-v1.0.2-cleanup
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build repository snapshot
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import zipfile
+
+          root = Path('.')
+          output = Path('repository-snapshot.zip')
+          with zipfile.ZipFile(output, 'w', zipfile.ZIP_DEFLATED) as archive:
+              for path in sorted(root.rglob('*')):
+                  if not path.is_file() or '.git' in path.parts or path == output:
+                      continue
+                  archive.write(path, path.as_posix())
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: architecture-council-audit-snapshot
+          path: repository-snapshot.zip
+          if-no-files-found: error
