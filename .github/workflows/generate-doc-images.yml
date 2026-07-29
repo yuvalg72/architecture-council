@@ -1,6 +1,12 @@
 name: Generate Documentation Images
 
 on:
+  push:
+    branches:
+      - agent/fix-readme-images
+    paths:
+      - "scripts/generate-documentation-images.py"
+      - ".github/workflows/generate-doc-images.yml"
   workflow_dispatch:
 
 permissions:
