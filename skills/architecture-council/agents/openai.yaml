@@ -1,0 +1,14 @@
+interface:
+  display_name: Architecture Council
+  short_description: Run structured executive and architecture deliberation for high-stakes decisions.
+  icon_small: ./assets/icon.svg
+  icon_large: ./assets/icon.svg
+  brand_color: '#263238'
+  default_prompt: Use $architecture-council to convene the lightest appropriate council, preserve dissent, define kill criteria, and produce one actionable decision record.
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true
