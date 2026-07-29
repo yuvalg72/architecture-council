@@ -1,29 +1,27 @@
 ---
 name: Bug report
-about: Something in the council protocol, installer, or scripts misbehaves
+about: Report incorrect Skill behavior, validation, packaging, or documentation
 title: "bug: "
 labels: bug
 ---
 
 ## What happened
 
-<!-- What did you run, what did you expect, what did you get instead? -->
+Describe the request, expected behavior, and actual behavior.
 
-## Host & mode
+## Skill context
 
-- Host coordinator: <!-- Claude Code / Codex / Gemini CLI / other -->
-- Command: <!-- e.g. /council --quick Should we ... -->
-- Mode: <!-- full / quick / duo -->
-- Providers detected: <!-- paste `bash scripts/detect-providers.sh` output if relevant -->
+- Version:
+- Mode: Quick Council, Duo Review, or Full Council
+- Execution model:
+- Validator or command involved:
 
-## Relevant output
+## Reproduction
+
+Provide the smallest safe reproduction. Redact customer and internal information.
+
+## Validation output
 
 ```text
-<!-- paste the verdict/session-metadata block or error output; redact anything sensitive -->
+Paste the relevant error or validation output.
 ```
-
-## Environment
-
-- OS:
-- Install method: <!-- install.sh flags used -->
-- Version: <!-- CHANGELOG version or commit SHA -->

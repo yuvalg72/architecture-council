@@ -1,21 +1,19 @@
-## What & why
+## What changed
 
-<!-- One paragraph: what changes and what problem it solves. Link the issue if there is one. -->
+Describe the complete change and the problem it solves.
 
-## Protocol parity
+## Decision-quality impact
 
-Protocol features live in three coordinator files that must not drift:
-
-- [ ] Change applied to `SKILL.md` (or N/A)
-- [ ] Mirrored in `SKILL.codex.md` (or N/A / host-exempt with reason)
-- [ ] Mirrored in `SKILL.gemini.md` (or N/A / host-exempt with reason)
+Explain how the change improves evidence quality, reviewer independence, dissent preservation, validation, governance, or outcome tracking.
 
 ## Validation
 
-- [ ] `./scripts/council-simulation-checklist.sh` passes
-- [ ] `./install.sh --dry-run` passes (plus `--codex` / `--gemini` if installer changed)
-- [ ] Tested at least one mode (full/quick/duo) if protocol behavior changed
+- [ ] `python scripts/validate-repository.py`
+- [ ] `python scripts/build-chatgpt-skill.py`
+- [ ] Changed scripts were tested directly
+- [ ] `dist/skill.zip` contains the final source
+- [ ] No secrets or customer-sensitive material were added
 
-## Evidence
+## Compatibility
 
-<!-- For protocol changes: cite the paper/benchmark/observation motivating it (repo convention — see issue #28). For fixes: how to reproduce the bug. -->
+State any schema, behavior, or packaging impact.

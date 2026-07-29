@@ -6,6 +6,7 @@ on:
     paths:
       - "skills/architecture-council/**"
       - "scripts/build-chatgpt-skill.py"
+      - "scripts/validate-repository.py"
       - "CHATGPT.md"
       - ".github/workflows/validate-chatgpt-skill.yml"
   pull_request:
@@ -13,6 +14,7 @@ on:
     paths:
       - "skills/architecture-council/**"
       - "scripts/build-chatgpt-skill.py"
+      - "scripts/validate-repository.py"
       - "CHATGPT.md"
       - ".github/workflows/validate-chatgpt-skill.yml"
 
@@ -27,14 +29,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-
+      - name: Validate repository
+        run: python scripts/validate-repository.py
       - name: Validate and package native ChatGPT Skill
         run: python scripts/build-chatgpt-skill.py
-
       - name: Upload distributable Skill
         uses: actions/upload-artifact@v4
         with:

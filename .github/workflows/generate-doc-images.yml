@@ -1,0 +1,42 @@
+name: Generate Documentation Images
+
+on:
+  push:
+    branches:
+      - agent/architecture-council-v1.0.2-cleanup
+    paths:
+      - "scripts/generate-documentation-images.py"
+      - ".github/workflows/generate-doc-images.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install image dependency
+        run: python -m pip install --disable-pip-version-check pillow
+      - name: Generate JPEG assets
+        run: python scripts/generate-documentation-images.py
+      - name: Validate repository
+        run: python scripts/validate-repository.py
+      - name: Commit generated assets
+        run: |
+          if git diff --quiet -- skills/architecture-council/assets; then
+            echo "Documentation images are already current."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add skills/architecture-council/assets/*.jpg
+          git commit -m "docs: regenerate Architecture Council method images"
+          git push
