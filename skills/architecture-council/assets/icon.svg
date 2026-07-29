@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Architecture Council</title>
+  <desc id="desc">A round council table surrounded by six decision seats</desc>
+  <rect width="512" height="512" rx="96" fill="#263238"/>
+  <circle cx="256" cy="256" r="104" fill="none" stroke="#ECEFF1" stroke-width="24"/>
+  <circle cx="256" cy="256" r="28" fill="#ECEFF1"/>
+  <g fill="#90A4AE">
+    <circle cx="256" cy="84" r="34"/>
+    <circle cx="405" cy="170" r="34"/>
+    <circle cx="405" cy="342" r="34"/>
+    <circle cx="256" cy="428" r="34"/>
+    <circle cx="107" cy="342" r="34"/>
+    <circle cx="107" cy="170" r="34"/>
+  </g>
+  <g stroke="#90A4AE" stroke-width="16" stroke-linecap="round">
+    <path d="M256 124v28"/>
+    <path d="M371 190l-24 14"/>
+    <path d="M371 322l-24-14"/>
+    <path d="M256 388v-28"/>
+    <path d="M141 322l24-14"/>
+    <path d="M141 190l24 14"/>
+  </g>
+</svg>

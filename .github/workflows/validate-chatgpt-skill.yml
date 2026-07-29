@@ -1,0 +1,43 @@
+name: Validate ChatGPT Skill
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - "skills/architecture-council/**"
+      - "scripts/build-chatgpt-skill.py"
+      - "CHATGPT.md"
+      - ".github/workflows/validate-chatgpt-skill.yml"
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - "skills/architecture-council/**"
+      - "scripts/build-chatgpt-skill.py"
+      - "CHATGPT.md"
+      - ".github/workflows/validate-chatgpt-skill.yml"
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Validate and package native ChatGPT Skill
+        run: python scripts/build-chatgpt-skill.py
+
+      - name: Upload distributable Skill
+        uses: actions/upload-artifact@v4
+        with:
+          name: architecture-council-chatgpt-skill
+          path: dist/skill.zip
+          if-no-files-found: error
