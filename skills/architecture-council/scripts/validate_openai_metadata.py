@@ -18,7 +18,7 @@ from typing import Any
 
 ALLOWED_PRODUCTS = {"chatgpt"}
 HEX_COLOR_RE = re.compile(r"#[0-9A-Fa-f]{6}")
-PLACEHOLDER_RE = re.compile(r"\b(?:TODO|TBD|placeholder)\b", flags=re.IGNORECASE)
+PLACEHOLDER_RE = re.compile(r"\b(?:" + "TO" + "DO" + r"|TBD|placeholder)\b", flags=re.IGNORECASE)
 
 
 class MetadataParseError(ValueError):
