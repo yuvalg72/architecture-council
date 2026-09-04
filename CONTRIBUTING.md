@@ -15,7 +15,7 @@ Architecture Council is maintained as a native ChatGPT Skill.
 9. Run `python scripts/build-chatgpt-skill.py`.
 10. Verify `dist/skill.zip` after the final source change.
 11. Preserve the MIT license files.
-12. Do not publish secrets, customer configurations, or unapproved internal material.
+12. Do not publish secrets, customer configurations, production identifiers, organization-specific context, customer names, internal project names, or unapproved internal material unless the information is necessary to the public project's function and explicitly appropriate for publication.
 
 ## Pull requests
 
