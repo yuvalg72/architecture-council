@@ -62,7 +62,7 @@ When isolated agents are unavailable, run separate structured passes and identif
 
 ## Security boundary
 
-For Mornex, customer, configuration, commercial, contractual, security, or internal information:
+For organizational, customer, configuration, commercial, contractual, security, or other sensitive information:
 
 - use only approved connected environments and providers;
 - do not distribute material across external providers by default;
