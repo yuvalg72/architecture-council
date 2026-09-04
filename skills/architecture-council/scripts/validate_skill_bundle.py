@@ -12,17 +12,19 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 
 REQUIRED_FILES = {
+    "README.md",
     "SKILL.md",
     "VERSION",
     "CHANGELOG.md",
     "NOTICE.md",
     "agents/openai.yaml",
     "assets/icon.svg",
-    "assets/architecture-council-overview.jpg",
-    "assets/professional-review-panel.jpg",
-    "assets/council-process.jpg",
-    "assets/evidence-and-decision-model.jpg",
-    "assets/outcome-tracking.jpg",
+    "assets/hero-council-3d.svg",
+    "assets/review-panel-3d.svg",
+    "assets/decision-flow-3d.svg",
+    "assets/evidence-model-3d.svg",
+    "assets/outcome-loop-3d.svg",
+    "assets/social-preview.svg",
     "LICENSES/council-of-high-intelligence-MIT.txt",
     "references/council-protocol.md",
     "references/reviewer-roles.md",
@@ -39,12 +41,14 @@ REQUIRED_FILES = {
     "tests/test_validators.py",
 }
 PLACEHOLDER_MARKERS = ("TO" + "DO", "example_" + "asset", "api_" + "reference.md")
-JPEG_FILES = (
-    "assets/architecture-council-overview.jpg",
-    "assets/professional-review-panel.jpg",
-    "assets/council-process.jpg",
-    "assets/evidence-and-decision-model.jpg",
-    "assets/outcome-tracking.jpg",
+SVG_FILES = (
+    "assets/icon.svg",
+    "assets/hero-council-3d.svg",
+    "assets/review-panel-3d.svg",
+    "assets/decision-flow-3d.svg",
+    "assets/evidence-model-3d.svg",
+    "assets/outcome-loop-3d.svg",
+    "assets/social-preview.svg",
 )
 SECRET_PATTERNS = [
     re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
@@ -52,33 +56,6 @@ SECRET_PATTERNS = [
     re.compile(r"\bgh[pousr]_[A-Za-z0-9_]{20,}\b"),
     re.compile(r"\bsk-[A-Za-z0-9_-]{20,}\b"),
 ]
-
-
-def jpeg_dimensions(data: bytes) -> tuple[int, int] | None:
-    if len(data) < 4 or data[:2] != b"\xff\xd8" or data[-2:] != b"\xff\xd9":
-        return None
-    index = 2
-    while index + 9 < len(data):
-        if data[index] != 0xFF:
-            index += 1
-            continue
-        marker = data[index + 1]
-        index += 2
-        if marker in {0xD8, 0xD9}:
-            continue
-        if index + 2 > len(data):
-            return None
-        length = int.from_bytes(data[index:index + 2], "big")
-        if length < 2 or index + length > len(data):
-            return None
-        if marker in {0xC0, 0xC1, 0xC2, 0xC3, 0xC5, 0xC6, 0xC7, 0xC9, 0xCA, 0xCB, 0xCD, 0xCE, 0xCF}:
-            if length < 7:
-                return None
-            height = int.from_bytes(data[index + 3:index + 5], "big")
-            width = int.from_bytes(data[index + 5:index + 7], "big")
-            return width, height
-        index += length
-    return None
 
 
 def parse_frontmatter(text: str) -> tuple[dict[str, str], str]:
@@ -97,6 +74,24 @@ def parse_frontmatter(text: str) -> tuple[dict[str, str], str]:
         key, value = line.split(":", 1)
         fields[key.strip()] = value.strip().strip('"')
     return fields, text[end + 5:]
+
+
+def svg_viewbox(path: Path) -> tuple[float, float] | None:
+    try:
+        root = ET.parse(path).getroot()
+    except ET.ParseError:
+        return None
+    parts = root.attrib.get("viewBox", "").strip().split()
+    if len(parts) != 4:
+        return None
+    try:
+        width = float(parts[2])
+        height = float(parts[3])
+    except ValueError:
+        return None
+    if width <= 0 or height <= 0:
+        return None
+    return width, height
 
 
 def validate(root: Path) -> list[str]:
@@ -145,31 +140,34 @@ def validate(root: Path) -> list[str]:
             if required not in yaml_text:
                 errors.append(f"agents/openai.yaml missing {required}")
 
-    icon_path = root / "assets" / "icon.svg"
-    if icon_path.exists():
-        try:
-            ET.parse(icon_path)
-        except ET.ParseError as exc:
-            errors.append(f"invalid SVG icon: {exc}")
-
     image_digests: dict[str, str] = {}
-    for relative in JPEG_FILES:
+    for relative in SVG_FILES:
         path = root / relative
         if not path.is_file():
             continue
-        data = path.read_bytes()
-        dimensions = jpeg_dimensions(data)
+        dimensions = svg_viewbox(path)
         if dimensions is None:
-            errors.append(f"invalid JPEG asset: {relative}")
+            errors.append(f"invalid SVG asset or viewBox: {relative}")
             continue
         width, height = dimensions
-        if width < 500 or height < 300:
-            errors.append(f"JPEG asset is too small: {relative} ({width}x{height})")
-        if len(data) < 50000:
-            errors.append(f"JPEG asset appears incomplete: {relative} ({len(data)} bytes)")
-        digest = hashlib.sha256(data).hexdigest()
+        if relative == "assets/icon.svg":
+            if width < 256 or height < 256:
+                errors.append(f"icon SVG is too small: {relative} ({width:g}x{height:g})")
+        elif width < 1000 or height < 500:
+            errors.append(f"documentation SVG is too small: {relative} ({width:g}x{height:g})")
+
+        text = path.read_text(encoding="utf-8")
+        lowered = text.lower()
+        if "role=\"img\"" not in text or "<title" not in text or "<desc" not in text:
+            errors.append(f"SVG accessibility metadata missing: {relative}")
+        if "<script" in lowered or "<foreignobject" in lowered:
+            errors.append(f"unsafe or non-portable SVG element found: {relative}")
+        if re.search(r"(?:href|xlink:href)=[\"']https?://", text, flags=re.IGNORECASE):
+            errors.append(f"external SVG dependency found: {relative}")
+
+        digest = hashlib.sha256(path.read_bytes()).hexdigest()
         if digest in image_digests:
-            errors.append(f"duplicate JPEG content: {relative} and {image_digests[digest]}")
+            errors.append(f"duplicate SVG content: {relative} and {image_digests[digest]}")
         image_digests[digest] = relative
 
     forbidden_terms = (
