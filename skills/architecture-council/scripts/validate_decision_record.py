@@ -5,7 +5,7 @@ import argparse,json,re,sys
 from datetime import date
 from pathlib import Path
 from typing import Any,Iterable
-ALLOWED_MODES={"quick","duo","full"}; ALLOWED_EXECUTION_MODELS={"single-model structured deliberation","verified isolated agents","verified multi-provider"}; ALLOWED_RESULTS={"recommended","split","defer","reject"}; ALLOWED_STATUSES={"proposed","approved","implemented","confirmed","revised","reversed","inconclusive"}; ALLOWED_CONFIDENCE={"high","medium","low"}
+ALLOWED_MODES={"quick","duo","full"}; ALLOWED_EXECUTION_MODELS={"single-model structured deliberation","verified isolated agents","verified multi-provider"}; ALLOWED_RESULTS={"recommended","split","defer","reject"}; ALLOWED_STATUSES={"proposed","approved","implemented","confirmed","revised","reversed","inconclusive"}; ALLOWED_CONFIDENCE={"high","medium","low"}; ALLOWED_SCHEMA_VERSIONS={"1.0","1.1"}; ALLOWED_INTERVENTIONS={"insufficient_dissent","novelty_failure","premature_consensus","missing_stance","evidence_gap"}
 SECRET_PATTERNS=[re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),re.compile(r"\bAKIA[0-9A-Z]{16}\b"),re.compile(r"\bgh[pousr]_[A-Za-z0-9_]{20,}\b"),re.compile(r"\bsk-[A-Za-z0-9_-]{20,}\b")]
 def walk_strings(v:Any)->Iterable[str]:
     if isinstance(v,str): yield v
@@ -29,6 +29,23 @@ def validate(path:Path)->list[str]:
     e=[]; req=("decision_id","result","recommended_option","decision_authority","mode","execution_model","panel","domain_weight_seat","reviewer_stances","evidence_summary","recommendation","rationale","acceptable_compromises","vote_tally","minority_position","unresolved_questions","kill_criteria","concrete_next_action","implementation_action","owner","due_or_trigger","prediction","review_date","review_condition","success_evidence","reversal_evidence","expected_cost_of_reversal","status","confidence","limitations")
     for k in req:
         if k not in data:e.append(f"missing required field: {k}")
+    schema=data.get("schema_version","1.0")
+    if schema not in ALLOWED_SCHEMA_VERSIONS:e.append(f"schema_version must be one of {sorted(ALLOWED_SCHEMA_VERSIONS)}")
+    if schema=="1.1" and "protocol_interventions" not in data:e.append("missing required field for schema_version 1.1: protocol_interventions")
+    if "protocol_interventions" in data:
+        pi=data.get("protocol_interventions")
+        if not isinstance(pi,dict):e.append("protocol_interventions must be an object")
+        else:
+            if set(pi)!={"total","breakdown"}:e.append("protocol_interventions must contain exactly total and breakdown")
+            total=pi.get("total"); breakdown=pi.get("breakdown")
+            if not isinstance(total,int) or isinstance(total,bool) or total<0:e.append("protocol_interventions.total must be a non-negative integer")
+            if not isinstance(breakdown,dict):e.append("protocol_interventions.breakdown must be an object")
+            else:
+                if set(breakdown)!=ALLOWED_INTERVENTIONS:e.append(f"protocol_interventions.breakdown must contain exactly {sorted(ALLOWED_INTERVENTIONS)}")
+                valid_counts=True
+                for k,v in breakdown.items():
+                    if not isinstance(v,int) or isinstance(v,bool) or v<0:e.append(f"protocol_interventions.breakdown.{k} must be a non-negative integer");valid_counts=False
+                if isinstance(total,int) and not isinstance(total,bool) and total>=0 and valid_counts and total!=sum(breakdown.values()):e.append("protocol_interventions.total must equal the sum of breakdown counts")
     if isinstance(data.get("decision_id"),str) and not re.fullmatch(r"DEC-\d{4}-\d{3,}",data["decision_id"]):e.append("decision_id must match DEC-YYYY-NNN")
     for k in ("decision_id","decision_authority","recommendation","minority_position","concrete_next_action","implementation_action","owner","due_or_trigger","prediction","expected_cost_of_reversal"):
         if k in data and not ns(data[k]):e.append(f"{k} must be a non-empty string")
