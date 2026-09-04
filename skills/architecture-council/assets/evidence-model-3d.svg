@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 760" role="img" aria-labelledby="title desc">
+  <title id="title">Architecture Council evidence and decision model</title>
+  <desc id="desc">Four evidence classes are sorted before entering a weighted recommendation chamber that preserves a split decision when support is insufficient.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#07111F"/><stop offset="1" stop-color="#101A36"/></linearGradient>
+    <linearGradient id="fact" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#C8FFE9"/><stop offset="1" stop-color="#54E0B4"/></linearGradient>
+    <linearGradient id="inf" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#B8F7FF"/><stop offset="1" stop-color="#65E6FF"/></linearGradient>
+    <linearGradient id="ass" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#FFF2C8"/><stop offset="1" stop-color="#F7C873"/></linearGradient>
+    <linearGradient id="unk" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#FFD3E7"/><stop offset="1" stop-color="#FF7AB6"/></linearGradient>
+    <linearGradient id="verdict" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#E6E2FF"/><stop offset="1" stop-color="#8A7CFF"/></linearGradient>
+    <filter id="glow" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="11" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect width="1600" height="760" rx="28" fill="url(#bg)"/>
+  <text x="76" y="76" font-family="Arial, Helvetica, sans-serif" font-size="38" font-weight="800" fill="#ECF8FF">Evidence before consensus</text>
+  <text x="78" y="114" font-family="Arial, Helvetica, sans-serif" font-size="19" fill="#9FB4CB">Classify what is known before weighting what is preferred.</text>
+
+  <g font-family="Arial, Helvetica, sans-serif" text-anchor="middle" font-weight="800">
+    <g transform="translate(175 238)"><polygon points="0,0 128,-62 256,0 128,66" fill="url(#fact)"/><polygon points="0,0 128,66 128,176 0,110" fill="#2C9A77"/><polygon points="256,0 128,66 128,176 256,110" fill="#1D6B54"/><text x="128" y="36" font-size="20" fill="#07111F">FACT</text></g>
+    <g transform="translate(470 338)"><polygon points="0,0 128,-62 256,0 128,66" fill="url(#inf)"/><polygon points="0,0 128,66 128,176 0,110" fill="#1784A4"/><polygon points="256,0 128,66 128,176 256,110" fill="#0C5B7A"/><text x="128" y="36" font-size="20" fill="#07111F">INFERENCE</text></g>
+    <g transform="translate(175 510)"><polygon points="0,0 128,-62 256,0 128,66" fill="url(#ass)"/><polygon points="0,0 128,66 128,176 0,110" fill="#B4812C"/><polygon points="256,0 128,66 128,176 256,110" fill="#80571E"/><text x="128" y="36" font-size="20" fill="#07111F">ASSUMPTION</text></g>
+    <g transform="translate(470 610)"><polygon points="0,0 128,-62 256,0 128,66" fill="url(#unk)"/><polygon points="0,0 128,66 128,176 0,110" fill="#B54C7C"/><polygon points="256,0 128,66 128,176 256,110" fill="#7D3156"/><text x="128" y="36" font-size="20" fill="#07111F">UNKNOWN</text></g>
+  </g>
+
+  <g transform="translate(1030 300)" font-family="Arial, Helvetica, sans-serif" text-anchor="middle">
+    <ellipse cx="0" cy="178" rx="280" ry="86" fill="#00040B" opacity="0.52"/>
+    <polygon points="-260,0 0,-132 260,0 0,136" fill="url(#verdict)"/>
+    <polygon points="-260,0 0,136 0,330 -260,194" fill="#5D52CB"/>
+    <polygon points="260,0 0,136 0,330 260,194" fill="#392F8E"/>
+    <circle cx="0" cy="2" r="45" fill="#F4FDFF" filter="url(#glow)"/>
+    <circle cx="0" cy="2" r="25" fill="#8A7CFF"/>
+    <text y="212" font-size="26" font-weight="800" fill="#F5F3FF">WEIGHTED VERDICT</text>
+    <text y="252" font-size="18" font-weight="700" fill="#C9C6FF">2/3 threshold or split decision</text>
+  </g>
+
+  <g fill="none" stroke-width="3" stroke-linecap="round" opacity="0.36">
+    <path d="M430 300C670 280 760 320 840 350" stroke="#54E0B4"/>
+    <path d="M725 400C790 390 810 390 850 405" stroke="#65E6FF"/>
+    <path d="M430 575C650 560 760 520 850 470" stroke="#F7C873"/>
+    <path d="M725 650C810 610 840 560 875 510" stroke="#FF7AB6"/>
+  </g>
+</svg>

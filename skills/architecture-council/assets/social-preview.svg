@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" role="img" aria-labelledby="title desc">
+  <title id="title">Architecture Council social preview</title>
+  <desc id="desc">A premium isometric decision chamber for the Architecture Council ChatGPT Skill.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#07111F"/><stop offset="1" stop-color="#151B3D"/></linearGradient>
+    <linearGradient id="core" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#B8F7FF"/><stop offset="0.5" stop-color="#65E6FF"/><stop offset="1" stop-color="#8A7CFF"/></linearGradient>
+    <filter id="glow" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="10" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect width="1280" height="640" fill="url(#bg)"/>
+  <circle cx="920" cy="326" r="264" fill="#65E6FF" opacity="0.05"/>
+  <circle cx="920" cy="326" r="180" fill="none" stroke="#8A7CFF" stroke-opacity="0.18" stroke-dasharray="5 12"/>
+  <g transform="translate(920 338)">
+    <polygon points="-132,-26 0,-94 132,-26 0,44" fill="url(#core)"/>
+    <polygon points="-132,-26 0,44 0,162 -132,92" fill="#187F9F"/>
+    <polygon points="132,-26 0,44 0,162 132,92" fill="#403798"/>
+    <circle cx="0" cy="-21" r="27" fill="#F4FDFF" filter="url(#glow)"/>
+    <circle cx="0" cy="-21" r="15" fill="#65E6FF"/>
+  </g>
+  <g fill="#EAFBFF" opacity="0.92">
+    <circle cx="718" cy="214" r="24"/><circle cx="1122" cy="214" r="24"/><circle cx="688" cy="430" r="24"/><circle cx="1152" cy="430" r="24"/><circle cx="816" cy="520" r="24"/><circle cx="1024" cy="520" r="24"/>
+  </g>
+  <path d="M920 338L718 214M920 338L1122 214M920 338L688 430M920 338L1152 430M920 338L816 520M920 338L1024 520" stroke="#65E6FF" stroke-opacity="0.20" stroke-width="2"/>
+  <g font-family="Arial, Helvetica, sans-serif" fill="#EAFBFF">
+    <text x="74" y="194" font-size="58" font-weight="800">Architecture</text>
+    <text x="74" y="258" font-size="58" font-weight="800">Council</text>
+    <text x="78" y="316" font-size="23" font-weight="600" fill="#B7C8DA">Structured architecture and executive</text>
+    <text x="78" y="350" font-size="23" font-weight="600" fill="#B7C8DA">decision-making for high-stakes choices.</text>
+    <text x="78" y="432" font-size="17" font-weight="800" letter-spacing="2.8" fill="#65E6FF">NATIVE CHATGPT SKILL</text>
+  </g>
+</svg>

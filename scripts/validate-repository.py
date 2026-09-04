@@ -6,6 +6,7 @@ import ast
 import hashlib
 import re
 import sys
+import xml.etree.ElementTree as ET
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -19,10 +20,17 @@ FORBIDDEN_PATHS = {
     "scripts/council-simulation-checklist.sh",
     "scripts/detect-providers.sh",
     "scripts/gen-star-history.py",
+    "scripts/generate-documentation-images.py",
     ".github/FUNDING.yml",
     ".github/ISSUE_TEMPLATE/provider_support.md",
     ".github/workflows/star-chart.yml",
     ".github/workflows/export-audit-snapshot.yml",
+    ".github/workflows/generate-doc-images.yml",
+    "skills/architecture-council/assets/architecture-council-overview.jpg",
+    "skills/architecture-council/assets/professional-review-panel.jpg",
+    "skills/architecture-council/assets/council-process.jpg",
+    "skills/architecture-council/assets/evidence-and-decision-model.jpg",
+    "skills/architecture-council/assets/outcome-tracking.jpg",
 }
 FORBIDDEN_TERMS = (
     "Council" + " of High Intelligence",
@@ -42,39 +50,107 @@ SECRET_PATTERNS = (
     re.compile(r"\bgh[pousr]_[A-Za-z0-9_]{20,}\b"),
     re.compile(r"\bsk-[A-Za-z0-9_-]{20,}\b"),
 )
-IMAGE_PATHS = (
-    "skills/architecture-council/assets/architecture-council-overview.jpg",
-    "skills/architecture-council/assets/professional-review-panel.jpg",
-    "skills/architecture-council/assets/council-process.jpg",
-    "skills/architecture-council/assets/evidence-and-decision-model.jpg",
-    "skills/architecture-council/assets/outcome-tracking.jpg",
+SVG_PATHS = (
+    "skills/architecture-council/assets/icon.svg",
+    "skills/architecture-council/assets/hero-council-3d.svg",
+    "skills/architecture-council/assets/review-panel-3d.svg",
+    "skills/architecture-council/assets/decision-flow-3d.svg",
+    "skills/architecture-council/assets/evidence-model-3d.svg",
+    "skills/architecture-council/assets/outcome-loop-3d.svg",
+    "skills/architecture-council/assets/social-preview.svg",
+)
+SKILL_README_HEADINGS = (
+    "## What this Skill does",
+    "## Use this Skill when",
+    "## Core capabilities",
+    "## Typical workflow",
+    "## Expected output",
+    "## Guardrails and boundaries",
+    "## Example prompts",
+    "## Related Skills",
+    "## Skill files",
+    "## Repository navigation",
 )
 
-def jpeg_dimensions(data: bytes) -> tuple[int, int] | None:
-    if len(data) < 4 or data[:2] != b"\xff\xd8" or data[-2:] != b"\xff\xd9":
+
+def svg_viewbox(path: Path) -> tuple[float, float] | None:
+    try:
+        root = ET.parse(path).getroot()
+    except ET.ParseError:
         return None
-    i = 2
-    while i + 9 < len(data):
-        if data[i] != 0xFF:
-            i += 1
+    viewbox = root.attrib.get("viewBox", "").strip().split()
+    if len(viewbox) != 4:
+        return None
+    try:
+        width = float(viewbox[2])
+        height = float(viewbox[3])
+    except ValueError:
+        return None
+    if width <= 0 or height <= 0:
+        return None
+    return width, height
+
+
+def image_targets(markdown: str) -> set[str]:
+    targets = set(re.findall(r"!\[[^]]*\]\(([^)]+)\)", markdown))
+    targets.update(re.findall(r"<img\b[^>]*\bsrc=[\"']([^\"']+)[\"']", markdown, flags=re.IGNORECASE))
+    return targets
+
+
+def validate_local_images(errors: list[str], markdown_path: Path) -> None:
+    text = markdown_path.read_text(encoding="utf-8")
+    for target in sorted(image_targets(text)):
+        if target.startswith(("http://", "https://", "data:")):
             continue
-        marker = data[i + 1]
-        i += 2
-        if marker in {0xD8, 0xD9}:
+        resolved = (markdown_path.parent / target).resolve()
+        try:
+            resolved.relative_to(ROOT.resolve())
+        except ValueError:
+            errors.append(f"image reference escapes repository: {markdown_path.relative_to(ROOT)} -> {target}")
             continue
-        if i + 2 > len(data):
-            return None
-        length = int.from_bytes(data[i:i+2], "big")
-        if length < 2 or i + length > len(data):
-            return None
-        if marker in {0xC0,0xC1,0xC2,0xC3,0xC5,0xC6,0xC7,0xC9,0xCA,0xCB,0xCD,0xCE,0xCF}:
-            if length < 7:
-                return None
-            height = int.from_bytes(data[i+3:i+5], "big")
-            width = int.from_bytes(data[i+5:i+7], "big")
-            return width, height
-        i += length
-    return None
+        if not resolved.is_file():
+            errors.append(f"README references missing image: {markdown_path.relative_to(ROOT)} -> {target}")
+
+
+def skill_readme_contract_errors(text: str, skill_dir: Path = SKILL) -> list[str]:
+    errors: list[str] = []
+    for heading in SKILL_README_HEADINGS:
+        if heading not in text:
+            errors.append(f"Skill README missing required heading: {heading}")
+    if "assets/icon.svg" not in text:
+        errors.append("Skill README must reference assets/icon.svg")
+    if "@architecture-council" not in text:
+        errors.append("Skill README must include an exact @architecture-council invocation example")
+    if "SKILL.md" not in text or "authoritative control-plane" not in text:
+        errors.append("Skill README must distinguish human-facing documentation from authoritative SKILL.md behavior")
+    if re.search(r"\b(?:TODO|TBD)\b", text, flags=re.IGNORECASE):
+        errors.append("Skill README contains placeholder text")
+    if len(text.strip()) < 2500:
+        errors.append("Skill README is too short to function as a substantive landing page")
+
+    related = re.search(r"## Related Skills\n(?P<body>.*?)(?:\n## |\Z)", text, flags=re.DOTALL)
+    if related:
+        for target in re.findall(r"\[[^]]+\]\(([^)]+)\)", related.group("body")):
+            if target.startswith(("http://", "https://", "#")):
+                continue
+            resolved = (skill_dir / target).resolve()
+            try:
+                resolved.relative_to(ROOT.resolve())
+            except ValueError:
+                errors.append(f"Skill README related-Skill link escapes repository: {target}")
+                continue
+            if not resolved.exists():
+                errors.append(f"Skill README related-Skill link does not resolve: {target}")
+    return errors
+
+
+def validate_skill_readme(errors: list[str]) -> None:
+    path = SKILL / "README.md"
+    if not path.is_file():
+        errors.append("missing required Skill landing page: skills/architecture-council/README.md")
+        return
+    errors.extend(skill_readme_contract_errors(path.read_text(encoding="utf-8"), SKILL))
+
 
 def main() -> int:
     errors: list[str] = []
@@ -85,33 +161,52 @@ def main() -> int:
     versions = {
         "VERSION": (SKILL / "VERSION").read_text(encoding="utf-8").strip(),
     }
-    for rel in ("README.md", "CHATGPT.md", "CHANGELOG.md", "skills/architecture-council/CHANGELOG.md"):
-        text = (ROOT / rel).read_text(encoding="utf-8")
-        match = re.search(r"1\.0\.2", text)
-        if not match:
+    for rel in (
+        "README.md",
+        "CHATGPT.md",
+        "CHANGELOG.md",
+        "skills/architecture-council/README.md",
+        "skills/architecture-council/CHANGELOG.md",
+    ):
+        path = ROOT / rel
+        if not path.is_file():
+            errors.append(f"missing version-bearing file: {rel}")
+            continue
+        text = path.read_text(encoding="utf-8")
+        if not re.search(r"1\.0\.2", text):
             errors.append(f"version 1.0.2 missing from {rel}")
     if versions["VERSION"] != "1.0.2":
         errors.append("VERSION must be 1.0.2")
 
     digests: dict[str, str] = {}
-    for rel in IMAGE_PATHS:
+    for rel in SVG_PATHS:
         path = ROOT / rel
         if not path.is_file():
-            errors.append(f"missing JPEG asset: {rel}")
+            errors.append(f"missing SVG asset: {rel}")
             continue
-        data = path.read_bytes()
-        dims = jpeg_dimensions(data)
+        dims = svg_viewbox(path)
         if dims is None:
-            errors.append(f"invalid JPEG asset: {rel}")
+            errors.append(f"invalid SVG viewBox or XML: {rel}")
             continue
         width, height = dims
-        if width < 500 or height < 300:
-            errors.append(f"JPEG asset is too small: {rel} ({width}x{height})")
-        if len(data) < 50000:
-            errors.append(f"JPEG asset appears incomplete: {rel} ({len(data)} bytes)")
-        digest = hashlib.sha256(data).hexdigest()
+        if rel.endswith("icon.svg"):
+            if width < 256 or height < 256:
+                errors.append(f"icon SVG is too small: {rel} ({width:g}x{height:g})")
+        elif width < 1000 or height < 500:
+            errors.append(f"documentation SVG is too small: {rel} ({width:g}x{height:g})")
+
+        text = path.read_text(encoding="utf-8")
+        lowered = text.lower()
+        if "<script" in lowered or "<foreignobject" in lowered:
+            errors.append(f"unsafe or non-portable SVG element found: {rel}")
+        if re.search(r"(?:href|xlink:href)=[\"']https?://", text, flags=re.IGNORECASE):
+            errors.append(f"external SVG dependency found: {rel}")
+        if "role=\"img\"" not in text or "<title" not in text or "<desc" not in text:
+            errors.append(f"SVG accessibility metadata missing: {rel}")
+
+        digest = hashlib.sha256(path.read_bytes()).hexdigest()
         if digest in digests:
-            errors.append(f"duplicate JPEG content: {rel} and {digests[digest]}")
+            errors.append(f"duplicate SVG content: {rel} and {digests[digest]}")
         digests[digest] = rel
 
     text_suffixes = {".md", ".py", ".yaml", ".yml", ".json", ".txt", ".svg", ".sh"}
@@ -136,15 +231,23 @@ def main() -> int:
                 except SyntaxError as exc:
                     errors.append(f"Python syntax error in {rel}: {exc}")
 
-    readme = (ROOT / "README.md").read_text(encoding="utf-8")
-    for target in re.findall(r"!\[[^]]*\]\(([^)]+)\)", readme):
-        if not (ROOT / target).is_file():
-            errors.append(f"README references missing image: {target}")
+    validate_local_images(errors, ROOT / "README.md")
+    validate_local_images(errors, SKILL / "README.md")
+    validate_skill_readme(errors)
 
     required = {
-        "README.md", "CONTRIBUTING.md", "SECURITY.md", "CHATGPT.md", "CHANGELOG.md", "LICENSE",
-        "scripts/build-chatgpt-skill.py", "scripts/validate-repository.py",
-        "skills/architecture-council/SKILL.md", "skills/architecture-council/agents/openai.yaml",
+        "README.md",
+        "CONTRIBUTING.md",
+        "SECURITY.md",
+        "CHATGPT.md",
+        "CHANGELOG.md",
+        "LICENSE",
+        "docs/visual-system.md",
+        "scripts/build-chatgpt-skill.py",
+        "scripts/validate-repository.py",
+        "skills/architecture-council/README.md",
+        "skills/architecture-council/SKILL.md",
+        "skills/architecture-council/agents/openai.yaml",
     }
     for rel in sorted(required):
         if not (ROOT / rel).is_file():
@@ -157,6 +260,7 @@ def main() -> int:
         return 1
     print("Repository validation passed.")
     return 0
+
 
 if __name__ == "__main__":
     raise SystemExit(main())
