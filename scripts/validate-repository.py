@@ -82,6 +82,8 @@ SKILL_README_HEADINGS = (
     "## Skill files",
     "## Repository navigation",
 )
+WORKFLOW_USES_RE = re.compile(r"^\s*uses:\s*([^\s#]+)", flags=re.MULTILINE)
+FULL_COMMIT_SHA_RE = re.compile(r"^[0-9a-fA-F]{40}$")
 
 
 def svg_viewbox(path: Path) -> tuple[float, float] | None:
@@ -115,6 +117,24 @@ def public_hygiene_errors(text: str, rel: str) -> list[str]:
         if digest in PUBLIC_IDENTIFIER_TOKEN_HASHES:
             errors.append(f"organization-specific public identifier found in {rel}")
             break
+    return errors
+
+
+def workflow_action_reference_errors(text: str, rel: str) -> list[str]:
+    """Reject mutable refs for external GitHub Actions and reusable workflows."""
+    errors: list[str] = []
+    for raw_target in WORKFLOW_USES_RE.findall(text):
+        target = raw_target.strip().strip("\"'")
+        if target.startswith("./"):
+            continue
+        if target.startswith("docker://"):
+            continue
+        if "@" not in target:
+            errors.append(f"external workflow use has no immutable ref in {rel}: {target}")
+            continue
+        source, ref = target.rsplit("@", 1)
+        if not source or not FULL_COMMIT_SHA_RE.fullmatch(ref):
+            errors.append(f"external workflow use must pin a full 40-character commit SHA in {rel}: {target}")
     return errors
 
 
@@ -178,6 +198,12 @@ def main() -> int:
     for rel in sorted(FORBIDDEN_PATHS):
         if (ROOT / rel).exists():
             errors.append(f"obsolete path remains: {rel}")
+
+    workflow_root = ROOT / ".github" / "workflows"
+    workflow_paths = sorted(set(workflow_root.rglob("*.yml")) | set(workflow_root.rglob("*.yaml")))
+    for path in workflow_paths:
+        rel = path.relative_to(ROOT).as_posix()
+        errors.extend(workflow_action_reference_errors(path.read_text(encoding="utf-8"), rel))
 
     versions = {
         "VERSION": (SKILL / "VERSION").read_text(encoding="utf-8").strip(),
