@@ -7,6 +7,7 @@
 - Added a required human-facing Skill landing page without changing the v1.0.2 execution contract.
 - Added an accessible SVG asset set, a repository social-preview source, and visual-system documentation.
 - Added deterministic validation and regression tests for Skill landing-page quality, SVG integrity, accessibility metadata, and local image references.
+- Removed organization-specific wording from the public Skill security boundary and added repository-wide identifier-hygiene validation with regression coverage.
 
 ## [1.0.2] - 29/07/2026
 
