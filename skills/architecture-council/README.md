@@ -7,14 +7,14 @@
 <p align="center"><strong>Turn consequential architecture and executive choices into explicit, reviewable decision records.</strong></p>
 
 <p align="center">
-  <strong>Status: Active</strong> · Category: Decision Architecture · Product: ChatGPT · Version: 1.0.2
+  <strong>Status: Active</strong> · Category: Decision Architecture · Product: ChatGPT · Version: 1.1.0
 </p>
 
 > This README is the human-facing overview. `SKILL.md` remains the authoritative control-plane definition for triggering and execution behavior.
 
 ## What this Skill does
 
-Architecture Council convenes a structured professional review for high-stakes, ambiguous, or cross-functional decisions. It forces independent perspectives before synthesis, classifies evidence explicitly, preserves meaningful disagreement, calculates confidence-weighted support, and turns the final recommendation into a decision record with observable kill criteria and an outcome checkpoint.
+Architecture Council convenes a structured professional review for high-stakes, ambiguous, or cross-functional decisions. It forces independent perspectives before synthesis, classifies evidence explicitly, preserves meaningful disagreement, calculates confidence-weighted support, records corrective protocol interventions when they occur, and turns the final recommendation into a decision record with observable kill criteria and an outcome checkpoint.
 
 The council uses professional operating roles rather than generic personas. The Independent Chairman synthesizes the result and verifies the tally, but does not vote.
 
@@ -39,6 +39,7 @@ Do not use it for simple factual lookups, routine formatting, low-cost reversibl
 - **Independent review** - generates opening positions before reviewers see one another's conclusions.
 - **Evidence classification** - labels material claims as `FACT`, `INFERENCE`, `ASSUMPTION`, or `UNKNOWN`.
 - **Productive challenge** - exposes blind spots, challenges assumptions, and requires self-correction where justified.
+- **Protocol intervention observability** - records corrective passes outside normal mode-defined deliberation under a stable schema without treating them as model calls or extra votes.
 - **Weighted recommendation** - combines reviewer base weight with confidence and requires at least two-thirds of total possible base weight for a recommendation.
 - **Dissent preservation** - keeps minority positions and unresolved questions visible.
 - **Kill criteria** - defines observable conditions that should stop, reverse, or materially reconsider the decision.
@@ -52,10 +53,11 @@ Do not use it for simple factual lookups, routine formatting, low-cost reversibl
 4. Run the problem-restatement gate.
 5. Produce independent opening positions with evidence labels.
 6. Run the mode-specific challenge round.
-7. Require one final stance per reviewer with confidence and a dealbreaker.
-8. Calculate confidence-weighted support.
-9. Let the Independent Chairman synthesize the evidence, tally, dissent, compromise space, kill criteria, exactly one immediate action, owner, and review checkpoint.
-10. Validate structured records with the bundled scripts when JSON artifacts are produced.
+7. Record any corrective protocol intervention required outside the normal mode flow.
+8. Require one final stance per reviewer with confidence and a dealbreaker.
+9. Calculate confidence-weighted support.
+10. Let the Independent Chairman synthesize the evidence, tally, dissent, compromise space, kill criteria, exactly one immediate action, owner, and review checkpoint.
+11. Validate structured records with the bundled scripts when JSON artifacts are produced. New Decision Records use schema `1.1`; records without a schema version remain legacy-compatible as schema `1.0`.
 
 <p align="center">
   <img src="assets/decision-flow-3d.svg" alt="3D Architecture Council workflow from Decision Dossier to outcome checkpoint" width="100%">
@@ -69,6 +71,7 @@ A complete council response should make the following visible:
 - evidence labels for material claims;
 - independent reviewer positions;
 - disagreements that survived challenge;
+- corrective protocol intervention counts for new schema 1.1 records;
 - final reviewer stances and confidence;
 - the weighted support calculation;
 - the Independent Chairman's synthesis;
@@ -79,6 +82,8 @@ A complete council response should make the following visible:
 - a named owner and review checkpoint;
 - the actual execution model when isolated agents or provider independence are unavailable.
 
+Protocol interventions use five categories: `insufficient_dissent`, `novelty_failure`, `premature_consensus`, `missing_stance`, and `evidence_gap`. Each corrective pass receives one primary category, and the intervention total must equal the sum of the category counts.
+
 ## Guardrails and boundaries
 
 - `SKILL.md` is authoritative for execution behavior. Documentation changes in this README do not change the Skill's trigger or deliberation rules.
@@ -87,6 +92,7 @@ A complete council response should make the following visible:
 - For sensitive internal, customer, configuration, commercial, contractual, or security material, use only approved connected environments and redact unnecessary identifiers.
 - Never include passwords, tokens, private keys, authentication material, or full sensitive configurations.
 - Do not force consensus when the weighted threshold is not reached. Return a split decision and preserve the minority position.
+- Do not treat protocol intervention counts as model calls, provider dispatches, extra votes, or proof of independent execution.
 
 ## Example prompts
 
