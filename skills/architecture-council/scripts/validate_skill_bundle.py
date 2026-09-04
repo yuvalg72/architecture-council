@@ -11,6 +11,8 @@ import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
+from validate_openai_metadata import validate_metadata
+
 REQUIRED_FILES = {
     "README.md",
     "SKILL.md",
@@ -37,6 +39,7 @@ REQUIRED_FILES = {
     "references/examples.md",
     "scripts/validate_decision_dossier.py",
     "scripts/validate_decision_record.py",
+    "scripts/validate_openai_metadata.py",
     "scripts/validate_skill_bundle.py",
     "tests/test_validators.py",
 }
@@ -133,12 +136,8 @@ def validate(root: Path) -> list[str]:
         if not re.fullmatch(r"\d+\.\d+\.\d+", version):
             errors.append("VERSION must contain a semantic version")
 
-    yaml_path = root / "agents" / "openai.yaml"
-    if yaml_path.exists():
-        yaml_text = yaml_path.read_text(encoding="utf-8")
-        for required in ("display_name:", "short_description:", "products:", "allow_implicit_invocation:"):
-            if required not in yaml_text:
-                errors.append(f"agents/openai.yaml missing {required}")
+    if (root / "agents" / "openai.yaml").exists():
+        errors.extend(validate_metadata(root))
 
     image_digests: dict[str, str] = {}
     for relative in SVG_FILES:
