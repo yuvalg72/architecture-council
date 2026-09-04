@@ -82,7 +82,7 @@ SKILL_README_HEADINGS = (
     "## Skill files",
     "## Repository navigation",
 )
-WORKFLOW_USES_RE = re.compile(r"^\s*uses:\s*([^\s#]+)", flags=re.MULTILINE)
+WORKFLOW_USES_RE = re.compile(r"^\s*(?:-\s*)?uses:\s*([^\s#]+)", flags=re.MULTILINE)
 FULL_COMMIT_SHA_RE = re.compile(r"^[0-9a-fA-F]{40}$")
 
 
