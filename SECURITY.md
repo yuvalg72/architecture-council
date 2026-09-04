@@ -1,6 +1,6 @@
 # Security Policy
 
-Do not submit credentials, tokens, private keys, authentication material, customer secrets, raw customer configurations, or unapproved internal information.
+Do not submit credentials, tokens, private keys, authentication material, customer secrets, raw customer configurations, production identifiers, or unapproved internal information. Organization names, customer names, internal project names, and other identifying context must be omitted unless they are necessary to the public project's function and explicitly appropriate for publication.
 
 For internal, confidential, or restricted Decision Dossiers:
 

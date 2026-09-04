@@ -50,6 +50,17 @@ SECRET_PATTERNS = (
     re.compile(r"\bgh[pousr]_[A-Za-z0-9_]{20,}\b"),
     re.compile(r"\bsk-[A-Za-z0-9_-]{20,}\b"),
 )
+# Hashes represent non-product organization identifiers that must not be
+# republished in this generic public repository. Storing hashes avoids
+# embedding the identifiers themselves in the validation source.
+PUBLIC_IDENTIFIER_TOKEN_HASHES = {
+    "0590d85677f54b835b864e958a1e077f4d2648c3f669733f0be75de5c9216bfa",
+}
+PUBLIC_IDENTIFIER_TOKEN_RE = re.compile(r"[A-Za-z][A-Za-z0-9_-]*")
+GENERIC_SECURITY_BOUNDARY = (
+    "For organizational, customer, configuration, commercial, contractual, "
+    "security, or other sensitive information:"
+)
 SVG_PATHS = (
     "skills/architecture-council/assets/icon.svg",
     "skills/architecture-council/assets/hero-council-3d.svg",
@@ -95,6 +106,16 @@ def image_targets(markdown: str) -> set[str]:
     targets = set(re.findall(r"!\[[^]]*\]\(([^)]+)\)", markdown))
     targets.update(re.findall(r"<img\b[^>]*\bsrc=[\"']([^\"']+)[\"']", markdown, flags=re.IGNORECASE))
     return targets
+
+
+def public_hygiene_errors(text: str, rel: str) -> list[str]:
+    errors: list[str] = []
+    for token in PUBLIC_IDENTIFIER_TOKEN_RE.findall(text):
+        digest = hashlib.sha256(token.lower().encode("utf-8")).hexdigest()
+        if digest in PUBLIC_IDENTIFIER_TOKEN_HASHES:
+            errors.append(f"organization-specific public identifier found in {rel}")
+            break
+    return errors
 
 
 def validate_local_images(errors: list[str], markdown_path: Path) -> None:
@@ -178,6 +199,10 @@ def main() -> int:
     if versions["VERSION"] != "1.0.2":
         errors.append("VERSION must be 1.0.2")
 
+    skill_text = (SKILL / "SKILL.md").read_text(encoding="utf-8")
+    if GENERIC_SECURITY_BOUNDARY not in skill_text:
+        errors.append("SKILL.md security boundary must remain organization-neutral")
+
     digests: dict[str, str] = {}
     for rel in SVG_PATHS:
         path = ROOT / rel
@@ -218,6 +243,7 @@ def main() -> int:
             text = path.read_text(encoding="utf-8")
             if "\u2014" in text:
                 errors.append(f"em dash found in {rel}")
+            errors.extend(public_hygiene_errors(text, rel))
             if rel not in {"LICENSE", "skills/architecture-council/LICENSES/council-of-high-intelligence-MIT.txt", "scripts/validate-repository.py"}:
                 for term in FORBIDDEN_TERMS:
                     if term.lower() in text.lower():
