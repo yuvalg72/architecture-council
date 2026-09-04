@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 720" role="img" aria-labelledby="title desc">
+  <title id="title">Architecture Council decision flow</title>
+  <desc id="desc">An isometric five-stage decision pipeline from dossier to independent review, challenge, weighted verdict, and outcome checkpoint.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#081322"/><stop offset="1" stop-color="#111A36"/></linearGradient>
+    <linearGradient id="cyan" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#B8F7FF"/><stop offset="1" stop-color="#65E6FF"/></linearGradient>
+    <linearGradient id="violet" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#D8D2FF"/><stop offset="1" stop-color="#8A7CFF"/></linearGradient>
+    <linearGradient id="green" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#C8FFE9"/><stop offset="1" stop-color="#54E0B4"/></linearGradient>
+    <linearGradient id="amber" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#FFF2C8"/><stop offset="1" stop-color="#F7C873"/></linearGradient>
+    <linearGradient id="pink" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#FFD3E7"/><stop offset="1" stop-color="#FF7AB6"/></linearGradient>
+  </defs>
+  <rect width="1600" height="720" rx="28" fill="url(#bg)"/>
+  <text x="76" y="76" font-family="Arial, Helvetica, sans-serif" font-size="38" font-weight="800" fill="#ECF8FF">Decision flow</text>
+  <text x="78" y="114" font-family="Arial, Helvetica, sans-serif" font-size="19" fill="#9FB4CB">Independent reasoning first. Challenge second. Synthesis last.</text>
+
+  <g transform="translate(130 245)" font-family="Arial, Helvetica, sans-serif" text-anchor="middle" font-weight="800">
+    <g transform="translate(0 0)"><polygon points="0,0 160,-78 320,0 160,82" fill="url(#cyan)"/><polygon points="0,0 160,82 160,212 0,130" fill="#1784A4"/><polygon points="320,0 160,82 160,212 320,130" fill="#0C5B7A"/><text x="160" y="34" font-size="22" fill="#07111F">01</text><text x="160" y="268" font-size="20" fill="#EAFBFF">DECISION DOSSIER</text></g>
+    <g transform="translate(295 92)"><polygon points="0,0 160,-78 320,0 160,82" fill="url(#violet)"/><polygon points="0,0 160,82 160,212 0,130" fill="#5A50C7"/><polygon points="320,0 160,82 160,212 320,130" fill="#3A338D"/><text x="160" y="34" font-size="22" fill="#07111F">02</text><text x="160" y="268" font-size="20" fill="#EAFBFF">INDEPENDENT REVIEW</text></g>
+    <g transform="translate(590 0)"><polygon points="0,0 160,-78 320,0 160,82" fill="url(#green)"/><polygon points="0,0 160,82 160,212 0,130" fill="#2D9D7B"/><polygon points="320,0 160,82 160,212 320,130" fill="#1A6C55"/><text x="160" y="34" font-size="22" fill="#07111F">03</text><text x="160" y="268" font-size="20" fill="#EAFBFF">PRODUCTIVE CHALLENGE</text></g>
+    <g transform="translate(885 92)"><polygon points="0,0 160,-78 320,0 160,82" fill="url(#amber)"/><polygon points="0,0 160,82 160,212 0,130" fill="#B4812C"/><polygon points="320,0 160,82 160,212 320,130" fill="#80571E"/><text x="160" y="34" font-size="22" fill="#07111F">04</text><text x="160" y="268" font-size="20" fill="#EAFBFF">WEIGHTED VERDICT</text></g>
+    <g transform="translate(1180 0)"><polygon points="0,0 160,-78 320,0 160,82" fill="url(#pink)"/><polygon points="0,0 160,82 160,212 0,130" fill="#B54C7C"/><polygon points="320,0 160,82 160,212 320,130" fill="#7D3156"/><text x="160" y="34" font-size="22" fill="#07111F">05</text><text x="160" y="268" font-size="20" fill="#EAFBFF">OUTCOME CHECKPOINT</text></g>
+  </g>
+
+  <g fill="none" stroke="#BFEFFF" stroke-opacity="0.32" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M430 335L510 360"/><path d="M725 360L805 335"/><path d="M1020 335L1100 360"/><path d="M1315 360L1395 335"/>
+  </g>
+</svg>

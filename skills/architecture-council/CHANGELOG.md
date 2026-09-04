@@ -1,5 +1,17 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+- Added a dedicated human-facing Skill landing page that documents capabilities, workflow, outputs, boundaries, examples, files, and repository navigation.
+- Replaced legacy JPEG documentation graphics with an accessible vector-first isometric 3D asset set and refreshed Skill icon.
+- Aligned the Skill interface brand color with the new public visual system.
+
+### Validation
+
+- Added deterministic landing-page contract checks and regression coverage without changing the v1.0.2 trigger or execution behavior.
+
 ## [1.0.2] - 29/07/2026
 
 ### Changed

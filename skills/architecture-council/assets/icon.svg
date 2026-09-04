@@ -1,23 +1,28 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
   <title id="title">Architecture Council</title>
-  <desc id="desc">A round council table surrounded by six decision seats</desc>
-  <rect width="512" height="512" rx="96" fill="#263238"/>
-  <circle cx="256" cy="256" r="104" fill="none" stroke="#ECEFF1" stroke-width="24"/>
-  <circle cx="256" cy="256" r="28" fill="#ECEFF1"/>
-  <g fill="#90A4AE">
-    <circle cx="256" cy="84" r="34"/>
-    <circle cx="405" cy="170" r="34"/>
-    <circle cx="405" cy="342" r="34"/>
-    <circle cx="256" cy="428" r="34"/>
-    <circle cx="107" cy="342" r="34"/>
-    <circle cx="107" cy="170" r="34"/>
+  <desc id="desc">An isometric decision core surrounded by six professional review nodes.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#07111F"/><stop offset="1" stop-color="#171D40"/></linearGradient>
+    <linearGradient id="core" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#B8F7FF"/><stop offset="0.48" stop-color="#65E6FF"/><stop offset="1" stop-color="#8A7CFF"/></linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <circle cx="256" cy="256" r="146" fill="none" stroke="#65E6FF" stroke-opacity="0.20" stroke-width="5" stroke-dasharray="7 13"/>
+  <g stroke="#65E6FF" stroke-opacity="0.24" stroke-width="7" stroke-linecap="round">
+    <path d="M256 256L256 104"/><path d="M256 256L387 180"/><path d="M256 256L387 332"/><path d="M256 256L256 408"/><path d="M256 256L125 332"/><path d="M256 256L125 180"/>
   </g>
-  <g stroke="#90A4AE" stroke-width="16" stroke-linecap="round">
-    <path d="M256 124v28"/>
-    <path d="M371 190l-24 14"/>
-    <path d="M371 322l-24-14"/>
-    <path d="M256 388v-28"/>
-    <path d="M141 322l24-14"/>
-    <path d="M141 190l24 14"/>
+  <g>
+    <circle cx="256" cy="92" r="28" fill="#F7C873"/>
+    <circle cx="398" cy="174" r="28" fill="#8A7CFF"/>
+    <circle cx="398" cy="338" r="28" fill="#65E6FF"/>
+    <circle cx="256" cy="420" r="28" fill="#54E0B4"/>
+    <circle cx="114" cy="338" r="28" fill="#FF7AB6"/>
+    <circle cx="114" cy="174" r="28" fill="#65E6FF"/>
+  </g>
+  <g transform="translate(256 256)">
+    <polygon points="-82,-18 0,-60 82,-18 0,26" fill="url(#core)"/>
+    <polygon points="-82,-18 0,26 0,100 -82,56" fill="#1784A4"/>
+    <polygon points="82,-18 0,26 0,100 82,56" fill="#41389B"/>
+    <circle cy="-12" r="19" fill="#F4FDFF"/>
+    <circle cy="-12" r="10" fill="#65E6FF"/>
   </g>
 </svg>

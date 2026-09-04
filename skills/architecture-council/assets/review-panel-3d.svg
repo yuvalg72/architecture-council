@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 760" role="img" aria-labelledby="title desc">
+  <title id="title">Architecture Council professional review panel</title>
+  <desc id="desc">Six professional reviewer lenses arranged around a central council table with an elevated independent chairman.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#081322"/><stop offset="1" stop-color="#111B37"/></linearGradient>
+    <linearGradient id="ring" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#65E6FF"/><stop offset="1" stop-color="#8A7CFF"/></linearGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#EFFBFF" stop-opacity="0.78"/><stop offset="0.45" stop-color="#75D9F2" stop-opacity="0.24"/><stop offset="1" stop-color="#8A7CFF" stop-opacity="0.16"/></linearGradient>
+    <filter id="glow" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="13" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect width="1600" height="760" rx="28" fill="url(#bg)"/>
+  <text x="76" y="76" font-family="Arial, Helvetica, sans-serif" font-size="38" font-weight="800" fill="#ECF8FF">Professional review panel</text>
+  <text x="78" y="114" font-family="Arial, Helvetica, sans-serif" font-size="19" fill="#9FB4CB">Six independent decision lenses. One non-voting synthesizer.</text>
+
+  <g transform="translate(800 420)">
+    <ellipse cx="0" cy="110" rx="235" ry="70" fill="#00040B" opacity="0.5"/>
+    <ellipse cx="0" cy="0" rx="205" ry="104" fill="#0E2036" stroke="url(#ring)" stroke-width="6"/>
+    <ellipse cx="0" cy="0" rx="132" ry="65" fill="#07111F" stroke="#65E6FF" stroke-opacity="0.46" stroke-width="2"/>
+    <circle cx="0" cy="0" r="28" fill="#65E6FF" filter="url(#glow)"/>
+    <text x="0" y="7" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="800" fill="#07111F">DECISION</text>
+  </g>
+
+  <g font-family="Arial, Helvetica, sans-serif" text-anchor="middle" font-weight="800" fill="#EAFBFF">
+    <g transform="translate(408 260)"><polygon points="-92,-34 0,-80 92,-34 0,14" fill="url(#glass)" stroke="#65E6FF"/><polygon points="-92,-34 0,14 0,92 -92,44" fill="#11304B"/><polygon points="92,-34 0,14 0,92 92,44" fill="#0B223A"/><circle cy="-29" r="14" fill="#65E6FF"/><text y="132" font-size="18">STRATEGY</text></g>
+    <g transform="translate(1192 260)"><polygon points="-92,-34 0,-80 92,-34 0,14" fill="url(#glass)" stroke="#8A7CFF"/><polygon points="-92,-34 0,14 0,92 -92,44" fill="#11304B"/><polygon points="92,-34 0,14 0,92 92,44" fill="#0B223A"/><circle cy="-29" r="14" fill="#8A7CFF"/><text y="132" font-size="18">TECHNOLOGY</text></g>
+    <g transform="translate(300 500)"><polygon points="-92,-34 0,-80 92,-34 0,14" fill="url(#glass)" stroke="#54E0B4"/><polygon points="-92,-34 0,14 0,92 -92,44" fill="#11304B"/><polygon points="92,-34 0,14 0,92 92,44" fill="#0B223A"/><circle cy="-29" r="14" fill="#54E0B4"/><text y="132" font-size="18">DELIVERY</text></g>
+    <g transform="translate(1300 500)"><polygon points="-92,-34 0,-80 92,-34 0,14" fill="url(#glass)" stroke="#F7C873"/><polygon points="-92,-34 0,14 0,92 -92,44" fill="#11304B"/><polygon points="92,-34 0,14 0,92 92,44" fill="#0B223A"/><circle cy="-29" r="14" fill="#F7C873"/><text y="132" font-size="18">GOVERNANCE</text></g>
+    <g transform="translate(565 585)"><polygon points="-92,-34 0,-80 92,-34 0,14" fill="url(#glass)" stroke="#FF7AB6"/><polygon points="-92,-34 0,14 0,92 -92,44" fill="#11304B"/><polygon points="92,-34 0,14 0,92 92,44" fill="#0B223A"/><circle cy="-29" r="14" fill="#FF7AB6"/><text y="132" font-size="18">OPERATIONS</text></g>
+    <g transform="translate(1035 585)"><polygon points="-92,-34 0,-80 92,-34 0,14" fill="url(#glass)" stroke="#65E6FF"/><polygon points="-92,-34 0,14 0,92 -92,44" fill="#11304B"/><polygon points="92,-34 0,14 0,92 92,44" fill="#0B223A"/><circle cy="-29" r="14" fill="#65E6FF"/><text y="132" font-size="18">STAKEHOLDERS</text></g>
+  </g>
+
+  <g transform="translate(800 165)" font-family="Arial, Helvetica, sans-serif" text-anchor="middle">
+    <polygon points="-100,-28 0,-78 100,-28 0,24" fill="#F7C873"/><polygon points="-100,-28 0,24 0,100 -100,48" fill="#9C6922"/><polygon points="100,-28 0,24 0,100 100,48" fill="#6C4A1A"/>
+    <path d="M0 -50 L12 -23 L41 -19 L20 1 L25 31 L0 17 L-25 31 L-20 1 L-41 -19 L-12 -23 Z" fill="#FFF9DE"/>
+    <text y="138" font-size="18" font-weight="800" letter-spacing="2" fill="#FFE7A3">INDEPENDENT CHAIRMAN</text>
+  </g>
+
+  <g stroke-width="2.5" fill="none" opacity="0.34">
+    <path d="M800 420L408 260" stroke="#65E6FF"/><path d="M800 420L1192 260" stroke="#8A7CFF"/><path d="M800 420L300 500" stroke="#54E0B4"/><path d="M800 420L1300 500" stroke="#F7C873"/><path d="M800 420L565 625" stroke="#FF7AB6"/><path d="M800 420L1035 625" stroke="#65E6FF"/><path d="M800 420L800 190" stroke="#F7C873"/>
+  </g>
+</svg>

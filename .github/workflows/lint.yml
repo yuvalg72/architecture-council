@@ -9,12 +9,17 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: repository-validation-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   validate:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -27,7 +32,10 @@ jobs:
           markdownlint --config .markdownlint.json \
             README.md CONTRIBUTING.md CHANGELOG.md CHATGPT.md SECURITY.md \
             ".github/**/*.md" \
+            "docs/**/*.md" \
             "skills/architecture-council/**/*.md"
+      - name: Run repository contract tests
+        run: python -m unittest discover -s tests -p "test_*.py"
       - name: Validate repository
         run: python scripts/validate-repository.py
       - name: Validate and package Skill
