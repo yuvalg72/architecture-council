@@ -50,9 +50,6 @@ SECRET_PATTERNS = (
     re.compile(r"\bgh[pousr]_[A-Za-z0-9_]{20,}\b"),
     re.compile(r"\bsk-[A-Za-z0-9_-]{20,}\b"),
 )
-# Hashes represent non-product organization identifiers that must not be
-# republished in this generic public repository. Storing hashes avoids
-# embedding the identifiers themselves in the validation source.
 PUBLIC_IDENTIFIER_TOKEN_HASHES = {
     "0590d85677f54b835b864e958a1e077f4d2648c3f669733f0be75de5c9216bfa",
 }
@@ -82,6 +79,10 @@ SKILL_README_HEADINGS = (
     "## Skill files",
     "## Repository navigation",
 )
+WORKFLOW_USES_RE = re.compile(r"^\s*(?:-\s*)?uses\s*:\s*([^\s#]+)", flags=re.MULTILINE)
+FLOW_STYLE_USES_RE = re.compile(r"(?:\[|\{|,)\s*uses\s*:")
+BLOCK_SCALAR_START_RE = re.compile(r"^\s*(?:-\s*)?[A-Za-z0-9_-]+\s*:\s*[|>][+-]?[0-9]?\s*(?:#.*)?$")
+FULL_COMMIT_SHA_RE = re.compile(r"^[0-9a-fA-F]{40}$")
 
 
 def svg_viewbox(path: Path) -> tuple[float, float] | None:
@@ -115,6 +116,45 @@ def public_hygiene_errors(text: str, rel: str) -> list[str]:
         if digest in PUBLIC_IDENTIFIER_TOKEN_HASHES:
             errors.append(f"organization-specific public identifier found in {rel}")
             break
+    return errors
+
+
+def without_yaml_block_scalar_bodies(text: str) -> str:
+    """Hide block-scalar bodies so shell text containing `uses:` is not parsed as workflow structure."""
+    output: list[str] = []
+    block_indent: int | None = None
+    for line in text.splitlines():
+        stripped = line.strip()
+        indent = len(line) - len(line.lstrip(" "))
+        if block_indent is not None:
+            if not stripped or indent > block_indent:
+                output.append("")
+                continue
+            block_indent = None
+        output.append(line)
+        if BLOCK_SCALAR_START_RE.match(line):
+            block_indent = indent
+    return "\n".join(output)
+
+
+def workflow_action_reference_errors(text: str, rel: str) -> list[str]:
+    """Reject mutable refs for external GitHub Actions and reusable workflows."""
+    errors: list[str] = []
+    structural_text = without_yaml_block_scalar_bodies(text)
+    if FLOW_STYLE_USES_RE.search(structural_text):
+        errors.append(f"flow-style YAML uses entries are not allowed in {rel}; use block-style uses with an immutable ref")
+    for raw_target in WORKFLOW_USES_RE.findall(structural_text):
+        target = raw_target.strip().strip("\"'")
+        if target.startswith("./"):
+            continue
+        if target.startswith("docker://"):
+            continue
+        if "@" not in target:
+            errors.append(f"external workflow use has no immutable ref in {rel}: {target}")
+            continue
+        source, ref = target.rsplit("@", 1)
+        if not source or not FULL_COMMIT_SHA_RE.fullmatch(ref):
+            errors.append(f"external workflow use must pin a full 40-character commit SHA in {rel}: {target}")
     return errors
 
 
@@ -178,6 +218,12 @@ def main() -> int:
     for rel in sorted(FORBIDDEN_PATHS):
         if (ROOT / rel).exists():
             errors.append(f"obsolete path remains: {rel}")
+
+    workflow_root = ROOT / ".github" / "workflows"
+    workflow_paths = sorted(set(workflow_root.rglob("*.yml")) | set(workflow_root.rglob("*.yaml")))
+    for path in workflow_paths:
+        rel = path.relative_to(ROOT).as_posix()
+        errors.extend(workflow_action_reference_errors(path.read_text(encoding="utf-8"), rel))
 
     versions = {
         "VERSION": (SKILL / "VERSION").read_text(encoding="utf-8").strip(),
