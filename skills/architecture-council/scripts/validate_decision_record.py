@@ -32,6 +32,7 @@ def validate(path:Path)->list[str]:
     schema=data.get("schema_version","1.0")
     if schema not in ALLOWED_SCHEMA_VERSIONS:e.append(f"schema_version must be one of {sorted(ALLOWED_SCHEMA_VERSIONS)}")
     if schema=="1.1" and "protocol_interventions" not in data:e.append("missing required field for schema_version 1.1: protocol_interventions")
+    if "protocol_interventions" in data and schema!="1.1":e.append("protocol_interventions requires schema_version 1.1")
     if "protocol_interventions" in data:
         pi=data.get("protocol_interventions")
         if not isinstance(pi,dict):e.append("protocol_interventions must be an object")
