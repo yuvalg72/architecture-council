@@ -31,6 +31,8 @@ def main():
   x=record();x['evidence_summary']={'facts':[],'inferences':[],'assumptions':[],'unknowns':[]};cases.append((R,x,1,'empty evidence'))
   x=record();x.pop('protocol_interventions');cases.append((R,x,1,'schema 1.1 missing interventions'))
   x=record();x.pop('schema_version');x.pop('protocol_interventions');cases.append((R,x,0,'legacy schema 1.0 compatibility'))
+  x=record();x.pop('schema_version');cases.append((R,x,1,'interventions require explicit schema 1.1'))
+  x=record();x['schema_version']='1.0';cases.append((R,x,1,'schema 1.0 cannot carry interventions'))
   x=record();x['schema_version']='2.0';cases.append((R,x,1,'unsupported schema version'))
   x=record();x['protocol_interventions']=interventions(2,insufficient_dissent=1,evidence_gap=1);cases.append((R,x,0,'valid multiple interventions'))
   x=record();x['protocol_interventions']['total']=-1;cases.append((R,x,1,'negative intervention total'))
