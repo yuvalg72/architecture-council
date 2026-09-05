@@ -34,7 +34,17 @@ def parse_scalar(raw: str, lineno: int) -> Any:
     if value.startswith("'"):
         if len(value) < 2 or not value.endswith("'"):
             raise MetadataParseError(f"line {lineno}: unterminated single-quoted scalar")
-        return value[1:-1].replace("''", "'")
+        inner = value[1:-1]
+        index = 0
+        while index < len(inner):
+            if inner[index] != "'":
+                index += 1
+                continue
+            if index + 1 < len(inner) and inner[index + 1] == "'":
+                index += 2
+                continue
+            raise MetadataParseError(f"line {lineno}: single quote inside quoted scalar must be escaped as two single quotes")
+        return inner.replace("''", "'")
     if value.startswith('"'):
         try:
             parsed = json.loads(value)
@@ -117,15 +127,23 @@ def validate_icon_path(root: Path, value: Any, field: str) -> list[str]:
     path = Path(value)
     if path.is_absolute():
         return [f"agents/openai.yaml: interface.{field} must be relative"]
-    candidate = (root / path).resolve()
+
+    unresolved = root / path
+    current = root
+    for part in path.parts:
+        if part in {"", "."}:
+            continue
+        current = current / part
+        if current.is_symlink():
+            return [f"agents/openai.yaml: interface.{field} must not reference a symlink"]
+
+    candidate = unresolved.resolve()
     try:
         candidate.relative_to(root.resolve())
     except ValueError:
         return [f"agents/openai.yaml: interface.{field} escapes the Skill directory"]
     if not candidate.is_file():
         errors.append(f"agents/openai.yaml: interface.{field} points to missing file {value}")
-    if candidate.is_symlink():
-        errors.append(f"agents/openai.yaml: interface.{field} must not reference a symlink")
     return errors
 
 
