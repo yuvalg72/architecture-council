@@ -41,6 +41,19 @@ class WorkflowActionPinningTests(unittest.TestCase):
     def test_docker_reference_is_explicitly_outside_git_sha_rule(self) -> None:
         self.assertEqual([], self.errors_for("docker://alpine:3.20"))
 
+    def test_whitespace_before_colon_does_not_bypass_pinning(self) -> None:
+        text = "jobs:\n  test:\n    steps:\n      - uses : actions/checkout@v4\n"
+        self.assertTrue(MODULE.workflow_action_reference_errors(text, ".github/workflows/test.yml"))
+
+    def test_flow_style_uses_is_rejected_fail_closed(self) -> None:
+        text = "jobs: {test: {steps: [{uses: actions/checkout@v4}]}}\n"
+        errors = MODULE.workflow_action_reference_errors(text, ".github/workflows/test.yml")
+        self.assertTrue(any("flow-style YAML uses entries are not allowed" in error for error in errors))
+
+    def test_uses_text_inside_run_block_is_ignored(self) -> None:
+        text = "jobs:\n  test:\n    steps:\n      - run: |\n          echo checking\n          uses: actions/checkout@v4\n"
+        self.assertEqual([], MODULE.workflow_action_reference_errors(text, ".github/workflows/test.yml"))
+
 
 if __name__ == "__main__":
     unittest.main()
