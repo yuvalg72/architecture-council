@@ -29,7 +29,9 @@ def build(repo_root: Path, output: Path) -> tuple[Path, str]:
         raise FileNotFoundError(f"Skill directory not found: {skill_root}")
 
     run([sys.executable, str(skill_root / "scripts" / "validate_skill_bundle.py"), str(skill_root)], repo_root)
+    run([sys.executable, str(skill_root / "scripts" / "validate_protocol_contract.py"), str(skill_root)], repo_root)
     run([sys.executable, str(skill_root / "tests" / "test_validators.py")], repo_root)
+    run([sys.executable, str(skill_root / "tests" / "test_protocol_contract.py")], repo_root)
 
     output.parent.mkdir(parents=True, exist_ok=True)
     if output.exists():
