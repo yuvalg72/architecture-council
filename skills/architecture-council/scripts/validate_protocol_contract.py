@@ -112,7 +112,7 @@ def validate_contract(skill_root: Path) -> list[str]:
     )
     require(
         errors,
-        all(label in dossier_reference for label in EXPECTED_EVIDENCE_LABELS),
+        all(f"`{label}`" in dossier_reference for label in EXPECTED_EVIDENCE_LABELS),
         "decision-dossier.md evidence taxonomy drifted",
     )
     require(
