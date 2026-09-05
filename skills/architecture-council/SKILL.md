@@ -46,15 +46,16 @@ The Chairman synthesizes only and does not vote.
 4. Run the problem-restatement gate. Require each reviewer to state the core decision and one alternative framing.
 5. Produce independent opening positions using `FACT`, `INFERENCE`, `ASSUMPTION`, and `UNKNOWN` labels.
 6. Run the mode-specific challenge round. Full Council uses anonymized cross-examination and explicit self-correction. Duo Review uses direct responses. Quick Council omits cross-examination.
-7. Require one final stance per reviewer:
+7. If corrective work outside the normal mode flow is required, record one primary protocol intervention per corrective pass: `insufficient_dissent`, `novelty_failure`, `premature_consensus`, `missing_stance`, or `evidence_gap`. Do not count normal mode-defined challenge steps as interventions, and do not treat intervention counts as model-call counts.
+8. Require one final stance per reviewer:
 
 ```text
 STANCE: <option> | CONFIDENCE: high|medium|low | DEALBREAKER: <observable condition>
 ```
 
-8. Calculate weighted support. Use confidence factors high `1.00`, medium `0.75`, and low `0.50`. Give the preselected domain seat a base weight of `1.5`; all others receive `1.0`. Require at least two-thirds of total possible base weight for a recommendation.
-9. Let the Independent Chairman synthesize the evidence, tally, dissent, compromises, kill criteria, exactly one immediate action, owner, and review checkpoint.
-10. Validate structured JSON records with the bundled scripts before treating them as complete.
+9. Calculate weighted support. Use confidence factors high `1.00`, medium `0.75`, and low `0.50`. Give the preselected domain seat a base weight of `1.5`; all others receive `1.0`. Require at least two-thirds of total possible base weight for a recommendation.
+10. Let the Independent Chairman synthesize the evidence, tally, dissent, compromises, kill criteria, exactly one immediate action, owner, and review checkpoint. Protocol intervention metadata is process-quality context and never an extra vote.
+11. For newly generated Decision Records, set `schema_version` to `1.1` and include `protocol_interventions` with `total` equal to the sum of its category counts. Records without `schema_version` are accepted only as legacy `1.0` records for backward compatibility. Validate structured JSON records with the bundled scripts before treating them as complete.
 
 ## Execution honesty
 

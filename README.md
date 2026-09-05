@@ -7,14 +7,14 @@
 <p align="center"><strong>Structured architecture and executive decision-making for high-stakes choices.</strong></p>
 
 <p align="center">
-  <strong>Active</strong> · Native ChatGPT Skill · v1.0.2 · MIT License
+  <strong>Active</strong> · Native ChatGPT Skill · v1.1.0 · MIT License
 </p>
 
 <p align="center">
   <img src="skills/architecture-council/assets/hero-council-3d.svg" alt="3D Architecture Council decision chamber with six professional reviewers, an independent chairman, and a central decision core" width="100%">
 </p>
 
-Architecture Council turns consequential decisions into an explicit review process. It separates facts from assumptions, forces independent professional perspectives before synthesis, preserves dissent, applies a confidence-weighted recommendation threshold, and converts the final verdict into an observable decision record with kill criteria and an outcome checkpoint.
+Architecture Council turns consequential decisions into an explicit review process. It separates facts from assumptions, forces independent professional perspectives before synthesis, preserves dissent, applies a confidence-weighted recommendation threshold, records corrective protocol interventions when they are required, and converts the final verdict into an observable decision record with kill criteria and an outcome checkpoint.
 
 The Skill is designed for architecture, cybersecurity, operations, delivery, strategy, governance, customer impact, and other cross-functional decisions where a single-lens answer is not enough.
 
@@ -28,6 +28,7 @@ Architecture Council makes those tensions visible instead of flattening them int
 - material claims are labeled as `FACT`, `INFERENCE`, `ASSUMPTION`, or `UNKNOWN`;
 - dissent remains visible in the final decision record;
 - recommendation strength depends on weighted support and confidence;
+- corrective protocol interventions are recorded separately from normal deliberation and never treated as extra votes;
 - every decision ends with exactly one immediate next action, an owner, a review checkpoint, and observable kill criteria.
 
 ## Choose the lightest council that can change the outcome
@@ -66,10 +67,11 @@ The goal is not to maximize reviewer count. The goal is to expose a disagreement
 2. Select the mode and reviewers before positions exist.
 3. Produce independent opening positions.
 4. Classify evidence and challenge assumptions.
-5. Require explicit final stances with confidence and dealbreakers.
-6. Calculate confidence-weighted support.
-7. Preserve dissent and unresolved questions.
-8. Let the Independent Chairman synthesize the verdict, kill criteria, one immediate action, owner, and review checkpoint.
+5. Record any corrective protocol interventions required outside the normal mode flow.
+6. Require explicit final stances with confidence and dealbreakers.
+7. Calculate confidence-weighted support.
+8. Preserve dissent and unresolved questions.
+9. Let the Independent Chairman synthesize the verdict, kill criteria, one immediate action, owner, and review checkpoint.
 
 ## Evidence and decision model
 
@@ -86,6 +88,14 @@ Material claims are classified before deliberation:
 
 Each reviewer has a base weight. One preselected domain seat may receive a higher base weight when the decision clearly belongs to that domain. Confidence then scales the final stance. A recommendation requires at least two-thirds of total possible base weight. If no option reaches the threshold, the result is a split decision rather than manufactured consensus.
 
+## Protocol intervention observability
+
+Schema 1.1 Decision Records capture corrective work that occurs outside the normal mode-defined flow. Each corrective pass is assigned one primary category: `insufficient_dissent`, `novelty_failure`, `premature_consensus`, `missing_stance`, or `evidence_gap`.
+
+The intervention total must equal the sum of those five categories. These counts are process-quality signals only. They are not model-call counts, provider-dispatch counts, vote weights, or proof of independent-agent execution.
+
+Legacy Decision Records without `schema_version` remain valid as schema 1.0 records for backward compatibility.
+
 ## Outcome tracking
 
 <p align="center">
@@ -98,6 +108,7 @@ A verdict is treated as a testable hypothesis. Before execution, the decision re
 - the owner and review checkpoint;
 - success evidence and reversal evidence;
 - observable kill criteria;
+- protocol intervention metadata for new schema 1.1 records;
 - the later outcome as `confirmed`, `revised`, `reversed`, or `inconclusive`.
 
 The original rationale is preserved even when the later outcome changes the recommendation.
@@ -177,7 +188,7 @@ See [`CONTRIBUTING.md`](CONTRIBUTING.md) before changing the Skill, validation c
 
 ## Version
 
-Current Skill version: `1.0.2`
+Current Skill version: `1.1.0`
 
 ## License
 

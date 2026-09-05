@@ -225,9 +225,9 @@ def main() -> int:
         rel = path.relative_to(ROOT).as_posix()
         errors.extend(workflow_action_reference_errors(path.read_text(encoding="utf-8"), rel))
 
-    versions = {
-        "VERSION": (SKILL / "VERSION").read_text(encoding="utf-8").strip(),
-    }
+    version = (SKILL / "VERSION").read_text(encoding="utf-8").strip()
+    if not re.fullmatch(r"\d+\.\d+\.\d+", version):
+        errors.append("VERSION must contain a semantic version")
     for rel in (
         "README.md",
         "CHATGPT.md",
@@ -240,10 +240,8 @@ def main() -> int:
             errors.append(f"missing version-bearing file: {rel}")
             continue
         text = path.read_text(encoding="utf-8")
-        if not re.search(r"1\.0\.2", text):
-            errors.append(f"version 1.0.2 missing from {rel}")
-    if versions["VERSION"] != "1.0.2":
-        errors.append("VERSION must be 1.0.2")
+        if version and version not in text:
+            errors.append(f"version {version} missing from {rel}")
 
     skill_text = (SKILL / "SKILL.md").read_text(encoding="utf-8")
     if GENERIC_SECURITY_BOUNDARY not in skill_text:
