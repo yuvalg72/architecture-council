@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib.util
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -37,6 +38,13 @@ class OpenAIMetadataContractTests(unittest.TestCase):
         errors = self.mutate("interface:\n", "interface\n")
         self.assertTrue(any("invalid YAML" in error for error in errors))
 
+    def test_malformed_single_quoted_scalar_fails(self) -> None:
+        with self.assertRaises(MODULE.MetadataParseError):
+            MODULE.parse_scalar("'Run structured deliberation' invalid '", 1)
+
+    def test_escaped_single_quote_scalar_passes(self) -> None:
+        self.assertEqual("Council's decision", MODULE.parse_scalar("'Council''s decision'", 1))
+
     def test_missing_icon_file_fails(self) -> None:
         errors = self.mutate("icon_small: ./assets/icon.svg", "icon_small: ./assets/missing.svg")
         self.assertTrue(any("missing file" in error for error in errors))
@@ -44,6 +52,17 @@ class OpenAIMetadataContractTests(unittest.TestCase):
     def test_icon_path_traversal_fails(self) -> None:
         errors = self.mutate("icon_small: ./assets/icon.svg", "icon_small: ../README.md")
         self.assertTrue(any("escapes the Skill directory" in error for error in errors))
+
+    def test_icon_symlink_fails_before_dereference(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            assets = root / "assets"
+            assets.mkdir()
+            target = assets / "real.svg"
+            target.write_text("<svg/>", encoding="utf-8")
+            (assets / "link.svg").symlink_to(target)
+            errors = MODULE.validate_icon_path(root, "./assets/link.svg", "icon_small")
+            self.assertTrue(any("symlink" in error for error in errors))
 
     def test_external_icon_url_fails(self) -> None:
         errors = self.mutate("icon_small: ./assets/icon.svg", "icon_small: https://example.com/icon.svg")
