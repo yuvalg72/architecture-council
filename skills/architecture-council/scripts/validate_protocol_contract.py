@@ -29,6 +29,8 @@ EXPECTED_EXECUTION_MODELS = {
 }
 EXPECTED_RESULTS = {"recommended", "split", "defer", "reject"}
 EXPECTED_CONFIDENCE = {"high", "medium", "low"}
+EXPECTED_EVIDENCE_LABELS = {"FACT", "INFERENCE", "ASSUMPTION", "UNKNOWN"}
+EXPECTED_NON_VOTING_REVIEWERS = {"Independent Chairman"}
 
 
 def read(skill_root: Path, relative: str) -> str:
@@ -62,7 +64,9 @@ def validate_contract(skill_root: Path) -> list[str]:
         roles = read(skill_root, "references/reviewer-roles.md")
         protocol = read(skill_root, "references/council-protocol.md")
         output = read(skill_root, "references/output-contract.md")
+        dossier_reference = read(skill_root, "references/decision-dossier.md")
         security = read(skill_root, "references/security-and-provider-policy.md")
+        dossier_validator = read(skill_root, "scripts/validate_decision_dossier.py")
         record = read(skill_root, "scripts/validate_decision_record.py")
     except FileNotFoundError as exc:
         return [f"missing protocol source: {exc.filename}"]
@@ -75,6 +79,17 @@ def validate_contract(skill_root: Path) -> list[str]:
     require(errors, "The Chairman synthesizes only and does not vote." in skill, "SKILL.md must keep Chairman synthesis-only and non-voting")
     require(errors, "Synthesize only. Do not vote." in roles, "reviewer-roles.md must keep Chairman non-voting")
     require(errors, "Independent Chairman synthesize without voting" in protocol, "council-protocol.md must keep Chairman non-voting")
+    require(
+        errors,
+        literal_assignment(record, "NON_VOTING_REVIEWERS") == EXPECTED_NON_VOTING_REVIEWERS,
+        "validate_decision_record.py must explicitly classify Independent Chairman as non-voting",
+    )
+    require(
+        errors,
+        "panel must not include the non-voting Independent Chairman" in record
+        and "reviewer_stances must not include the non-voting Independent Chairman" in record,
+        "validate_decision_record.py must reject Independent Chairman from voting panels and stances",
+    )
 
     mode_patterns = {
         "quick": r"## Quick Council\s+Use three relevant professional reviewers",
@@ -89,7 +104,17 @@ def validate_contract(skill_root: Path) -> list[str]:
         "validate_decision_record.py mode panel sizes must remain quick=3, duo=2, full=6",
     )
 
-    require(errors, all(label in skill for label in ("`FACT`", "`INFERENCE`", "`ASSUMPTION`", "`UNKNOWN`")), "SKILL.md evidence taxonomy drifted")
+    require(errors, all(f"`{label}`" in skill for label in EXPECTED_EVIDENCE_LABELS), "SKILL.md evidence taxonomy drifted")
+    require(
+        errors,
+        literal_assignment(dossier_validator, "ALLOWED_LABELS") == EXPECTED_EVIDENCE_LABELS,
+        "validate_decision_dossier.py evidence-label enum drifted",
+    )
+    require(
+        errors,
+        all(label in dossier_reference for label in EXPECTED_EVIDENCE_LABELS),
+        "decision-dossier.md evidence taxonomy drifted",
+    )
     require(
         errors,
         '("facts","inferences","assumptions","unknowns")' in record,
@@ -124,6 +149,11 @@ def validate_contract(skill_root: Path) -> list[str]:
         "validate_decision_record.py recommendation threshold drifted",
     )
     require(errors, "A split result is required when no option reaches the threshold." in output, "output-contract.md split semantics drifted")
+    require(
+        errors,
+        'if result!="split":e.append("no threshold winner requires result split")' in record,
+        "validate_decision_record.py must enforce split when no option reaches the threshold",
+    )
 
     execution_models = literal_assignment(record, "ALLOWED_EXECUTION_MODELS")
     results = literal_assignment(record, "ALLOWED_RESULTS")
