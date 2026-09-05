@@ -5,7 +5,7 @@ import argparse,json,re,sys
 from datetime import date
 from pathlib import Path
 from typing import Any,Iterable
-ALLOWED_MODES={"quick","duo","full"}; ALLOWED_EXECUTION_MODELS={"single-model structured deliberation","verified isolated agents","verified multi-provider"}; ALLOWED_RESULTS={"recommended","split","defer","reject"}; ALLOWED_STATUSES={"proposed","approved","implemented","confirmed","revised","reversed","inconclusive"}; ALLOWED_CONFIDENCE={"high","medium","low"}
+ALLOWED_MODES={"quick","duo","full"}; ALLOWED_EXECUTION_MODELS={"single-model structured deliberation","verified isolated agents","verified multi-provider"}; ALLOWED_RESULTS={"recommended","split","defer","reject"}; ALLOWED_STATUSES={"proposed","approved","implemented","confirmed","revised","reversed","inconclusive"}; ALLOWED_CONFIDENCE={"high","medium","low"}; NON_VOTING_REVIEWERS={"Independent Chairman"}
 SECRET_PATTERNS=[re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),re.compile(r"\bAKIA[0-9A-Z]{16}\b"),re.compile(r"\bgh[pousr]_[A-Za-z0-9_]{20,}\b"),re.compile(r"\bsk-[A-Za-z0-9_-]{20,}\b")]
 def walk_strings(v:Any)->Iterable[str]:
     if isinstance(v,str): yield v
@@ -43,6 +43,7 @@ def validate(path:Path)->list[str]:
         expected={"quick":3,"duo":2,"full":6}.get(data.get("mode"),1)
         if len(panel)!=expected:e.append(f"panel must contain exactly {expected} reviewers for {data.get('mode')} mode")
         if len(panel)!=len(set(panel)):e.append("panel contains duplicate reviewers")
+        if any(reviewer in NON_VOTING_REVIEWERS for reviewer in panel):e.append("panel must not include the non-voting Independent Chairman")
         seat=data.get("domain_weight_seat")
         if seat is not None and seat not in panel:e.append("domain_weight_seat must be null or a reviewer in panel")
     stances=data.get("reviewer_stances")
@@ -54,6 +55,7 @@ def validate(path:Path)->list[str]:
             for k in ("reviewer","option","confidence","dealbreaker"):
                 if not ns(s.get(k)):e.append(f"reviewer_stances[{i}].{k} is required")
             if s.get("confidence") not in ALLOWED_CONFIDENCE:e.append(f"reviewer_stances[{i}].confidence is invalid")
+            if s.get("reviewer") in NON_VOTING_REVIEWERS:e.append("reviewer_stances must not include the non-voting Independent Chairman")
             if s.get("reviewer") in seen:e.append(f"duplicate reviewer stance: {s.get('reviewer')}")
             seen.add(s.get("reviewer"))
         if isinstance(panel,list) and set(panel)!=seen:e.append("reviewer_stances must contain exactly one stance for each panel reviewer")
@@ -71,7 +73,7 @@ def validate(path:Path)->list[str]:
     if isinstance(stances,list) and isinstance(panel,list):
         factors={"high":1.0,"medium":0.75,"low":0.5}; calc={}; total=0.0; seat=data.get("domain_weight_seat")
         for s in stances:
-            if not isinstance(s,dict) or s.get("confidence") not in factors or not ns(s.get("option")) or s.get("reviewer") not in panel:continue
+            if not isinstance(s,dict) or s.get("confidence") not in factors or not ns(s.get("option")) or s.get("reviewer") not in panel or s.get("reviewer") in NON_VOTING_REVIEWERS:continue
             base=1.5 if s.get("reviewer")==seat else 1.0; total+=base; calc[s["option"]]=calc.get(s["option"],0)+base*factors[s["confidence"]]
         if isinstance(tally,dict) and tally and (set(tally)!=set(calc) or any(abs(float(tally[k])-calc[k])>0.001 for k in calc)):e.append("vote_tally does not match reviewer_stances and domain weighting")
         threshold=(2/3)*total if total else 0; winners=[o for o,w in calc.items() if w+1e-9>=threshold]
@@ -79,7 +81,10 @@ def validate(path:Path)->list[str]:
         if result=="recommended":
             if len(winners)!=1:e.append("recommended result requires exactly one option to reach the two-thirds threshold")
             elif rec!=winners[0]:e.append("recommended_option must equal the threshold winner")
-        elif result=="split" and winners:e.append("split result is invalid when an option reaches the two-thirds threshold")
+        elif not winners:
+            if result!="split":e.append("no threshold winner requires result split")
+            if rec is not None:e.append("recommended_option must be null when no option reaches the threshold")
+        elif result=="split":e.append("split result is invalid when an option reaches the two-thirds threshold")
         elif result in {"defer","reject"} and rec is not None:e.append("recommended_option must be null for defer or reject")
     kc=data.get("kill_criteria")
     if not isinstance(kc,list) or not kc:e.append("kill_criteria must be a non-empty array")
