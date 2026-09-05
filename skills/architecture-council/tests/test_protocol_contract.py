@@ -52,13 +52,21 @@ class ProtocolContractMutationTests(unittest.TestCase):
         )
         self.assertTrue(any("missing reviewer heading" in error for error in errors))
 
-    def test_chairman_voting_drift_fails(self) -> None:
+    def test_chairman_voting_prose_drift_fails(self) -> None:
         errors = self.mutated_errors(
             "references/reviewer-roles.md",
             "Synthesize only. Do not vote.",
             "Synthesize and vote.",
         )
         self.assertTrue(any("Chairman non-voting" in error for error in errors))
+
+    def test_chairman_executable_guard_drift_fails(self) -> None:
+        errors = self.mutated_errors(
+            "scripts/validate_decision_record.py",
+            'NON_VOTING_REVIEWERS={"Independent Chairman"}',
+            "NON_VOTING_REVIEWERS=set()",
+        )
+        self.assertTrue(any("non-voting" in error for error in errors))
 
     def test_threshold_drift_fails(self) -> None:
         errors = self.mutated_errors(
@@ -67,6 +75,30 @@ class ProtocolContractMutationTests(unittest.TestCase):
             "three-quarters recommendation threshold",
         )
         self.assertTrue(any("recommendation threshold" in error for error in errors))
+
+    def test_split_executable_guard_drift_fails(self) -> None:
+        errors = self.mutated_errors(
+            "scripts/validate_decision_record.py",
+            'if result!="split":e.append("no threshold winner requires result split")',
+            'if result!="defer":e.append("no threshold winner may defer")',
+        )
+        self.assertTrue(any("must enforce split" in error for error in errors))
+
+    def test_dossier_evidence_enum_drift_fails(self) -> None:
+        errors = self.mutated_errors(
+            "scripts/validate_decision_dossier.py",
+            'ALLOWED_LABELS={"FACT","INFERENCE","ASSUMPTION","UNKNOWN"}',
+            'ALLOWED_LABELS={"FACT","INFERENCE","ASSUMPTION","VERIFIED"}',
+        )
+        self.assertTrue(any("evidence-label enum" in error for error in errors))
+
+    def test_dossier_reference_taxonomy_drift_fails(self) -> None:
+        errors = self.mutated_errors(
+            "references/decision-dossier.md",
+            "UNKNOWN",
+            "UNVERIFIED",
+        )
+        self.assertTrue(any("decision-dossier.md evidence taxonomy" in error for error in errors))
 
     def test_execution_model_enum_drift_fails(self) -> None:
         errors = self.mutated_errors(
