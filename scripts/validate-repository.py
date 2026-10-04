@@ -44,6 +44,10 @@ FORBIDDEN_TERMS = (
     "18 AI" + " personas",
     "multi" + "-persona",
 )
+PROVENANCE_DISCLOSURE_PREFIXES = (
+    "> **Product identity and provenance:**",
+    "> **Provenance:**",
+)
 SECRET_PATTERNS = (
     re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
     re.compile(r"\bAKIA[0-9A-Z]{16}\b"),
@@ -289,8 +293,13 @@ def main() -> int:
                 errors.append(f"em dash found in {rel}")
             errors.extend(public_hygiene_errors(text, rel))
             if rel not in {"LICENSE", "skills/architecture-council/LICENSES/council-of-high-intelligence-MIT.txt", "scripts/validate-repository.py"}:
+                stale_scan_text = "\n".join(
+                    line
+                    for line in text.splitlines()
+                    if not line.startswith(PROVENANCE_DISCLOSURE_PREFIXES)
+                )
                 for term in FORBIDDEN_TERMS:
-                    if term.lower() in text.lower():
+                    if term.lower() in stale_scan_text.lower():
                         errors.append(f"stale source-project term found in {rel}: {term}")
             for pattern in SECRET_PATTERNS:
                 if pattern.search(text):
