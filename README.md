@@ -10,6 +10,9 @@
   <strong>Active</strong> · Native ChatGPT Skill · v1.1.0 · MIT License
 </p>
 
+> [!IMPORTANT]
+> **Product identity and provenance:** Architecture Council is maintained here as a first-party product identity and native ChatGPT Skill, while this GitHub repository is technically derived from the upstream fork source `0xNyk/council-of-high-intelligence`. The upstream copyright and MIT license are retained. The current repository intentionally diverges into the Architecture Council product model, including the professional council roles, ChatGPT Skill packaging, validation, outcome tracking, and repository-specific documentation. It is not presented as an unmodified upstream mirror. See `skills/architecture-council/NOTICE.md` and the bundled third-party license for attribution.
+
 <p align="center">
   <img src="skills/architecture-council/assets/hero-council-3d.svg" alt="3D Architecture Council decision chamber with six professional reviewers, an independent chairman, and a central decision core" width="100%">
 </p>
