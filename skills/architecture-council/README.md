@@ -13,7 +13,7 @@
 > [!IMPORTANT]
 > **Provenance:** The Architecture Council product is maintained as a native ChatGPT Skill in this repository, which is derived from `0xNyk/council-of-high-intelligence`. Upstream copyright and MIT attribution are retained. The active Skill intentionally diverges through its professional council model, ChatGPT-specific packaging, validation contract, outcome tracking, and documentation. See `NOTICE.md` and `LICENSES/council-of-high-intelligence-MIT.txt`.
 
-> This README is the human-facing overview. `SKILL.md` remains the authoritative control-plane definition for triggering and execution behavior.
+This README is the human-facing overview. `SKILL.md` remains the authoritative control-plane definition for triggering and execution behavior.
 
 ## What this Skill does
 
