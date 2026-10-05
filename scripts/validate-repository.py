@@ -182,8 +182,10 @@ def skill_readme_contract_errors(text: str, skill_dir: Path = SKILL) -> list[str
     for heading in SKILL_README_HEADINGS:
         if heading not in text:
             errors.append(f"Skill README missing required heading: {heading}")
+    if "assets/icon.png" not in text:
+        errors.append("Skill README must publish assets/icon.png")
     if "assets/icon.svg" not in text:
-        errors.append("Skill README must reference assets/icon.svg")
+        errors.append("Skill README must document assets/icon.svg as the canonical source/runtime icon")
     if "@architecture-council" not in text:
         errors.append("Skill README must include an exact @architecture-council invocation example")
     if "SKILL.md" not in text or "authoritative control-plane" not in text:
