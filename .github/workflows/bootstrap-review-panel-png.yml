@@ -1,0 +1,56 @@
+name: Refresh Architecture review-panel PNG
+
+on:
+  push:
+    branches:
+      - remediation/issue-16-architecture-council-assets
+    paths:
+      - ".github/workflows/bootstrap-review-panel-png.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Check out trusted remediation branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: remediation/issue-16-architecture-council-assets
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.11"
+
+      - name: Install renderer dependencies
+        run: python -m pip install --disable-pip-version-check -r requirements-assets.txt
+
+      - name: Regenerate publication PNGs
+        run: python scripts/generate_assets.py
+
+      - name: Commit only corrected review-panel PNG
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          target="skills/architecture-council/assets/review-panel-3d.png"
+          mapfile -t changed < <(git status --porcelain=v1 --untracked-files=all | sed -E 's/^.. //')
+          if [ "${#changed[@]}" -ne 1 ] || [ "${changed[0]}" != "$target" ]; then
+            printf 'Unexpected generated changes:\n%s\n' "${changed[*]}"
+            exit 1
+          fi
+          git add -- "$target"
+          automation_branch="automation/issue-16-review-panel-${GITHUB_RUN_ID}"
+          git switch -c "$automation_branch"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Regenerate corrected review-panel PNG"
+          gh auth setup-git
+          git push origin "HEAD:refs/heads/$automation_branch"
