@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 720" role="img" aria-labelledby="title desc">
+  <title id="title">Architecture Council outcome tracking loop</title>
+  <desc id="desc">A 3D loop connects a decision hypothesis to owner, review checkpoint, evidence, and four possible outcome states.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#081322"/><stop offset="1" stop-color="#111A36"/></linearGradient>
+    <linearGradient id="core" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#B8F7FF"/><stop offset="0.5" stop-color="#65E6FF"/><stop offset="1" stop-color="#8A7CFF"/></linearGradient>
+    <filter id="glow" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="11" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect width="1600" height="720" rx="28" fill="url(#bg)"/>
+  <text x="76" y="76" font-family="Arial, Helvetica, sans-serif" font-size="38" font-weight="800" fill="#ECF8FF">Verdict as a testable hypothesis</text>
+  <text x="78" y="114" font-family="Arial, Helvetica, sans-serif" font-size="19" fill="#9FB4CB">Define what success, reversal, and a kill condition look like before execution.</text>
+
+  <g transform="translate(800 380)">
+    <ellipse cx="0" cy="118" rx="205" ry="62" fill="#00040B" opacity="0.48"/>
+    <polygon points="-156,-8 0,-88 156,-8 0,74" fill="url(#core)"/>
+    <polygon points="-156,-8 0,74 0,202 -156,120" fill="#1983A3"/>
+    <polygon points="156,-8 0,74 0,202 156,120" fill="#41389B"/>
+    <circle cx="0" cy="-10" r="32" fill="#F4FDFF" filter="url(#glow)"/>
+    <text x="0" y="108" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="800" fill="#F4FDFF">DECISION HYPOTHESIS</text>
+  </g>
+
+  <g font-family="Arial, Helvetica, sans-serif" text-anchor="middle" font-weight="800">
+    <g transform="translate(325 250)"><rect x="-132" y="-52" width="264" height="104" rx="26" fill="#10233C" stroke="#54E0B4" stroke-width="2"/><circle cx="-92" cy="0" r="17" fill="#54E0B4"/><text x="18" y="7" font-size="19" fill="#EAFBFF">OWNER</text></g>
+    <g transform="translate(1280 250)"><rect x="-160" y="-52" width="320" height="104" rx="26" fill="#10233C" stroke="#65E6FF" stroke-width="2"/><circle cx="-120" cy="0" r="17" fill="#65E6FF"/><text x="24" y="7" font-size="19" fill="#EAFBFF">REVIEW CHECKPOINT</text></g>
+    <g transform="translate(325 515)"><rect x="-168" y="-52" width="336" height="104" rx="26" fill="#10233C" stroke="#F7C873" stroke-width="2"/><circle cx="-128" cy="0" r="17" fill="#F7C873"/><text x="22" y="7" font-size="19" fill="#EAFBFF">REVERSAL EVIDENCE</text></g>
+    <g transform="translate(1280 515)"><rect x="-145" y="-52" width="290" height="104" rx="26" fill="#10233C" stroke="#FF7AB6" stroke-width="2"/><circle cx="-105" cy="0" r="17" fill="#FF7AB6"/><text x="20" y="7" font-size="19" fill="#EAFBFF">KILL CRITERIA</text></g>
+  </g>
+
+  <g fill="none" stroke-width="4" stroke-linecap="round" stroke-dasharray="8 11" opacity="0.42">
+    <path d="M450 250C585 205 675 220 740 275" stroke="#54E0B4"/>
+    <path d="M860 275C980 205 1080 205 1120 250" stroke="#65E6FF"/>
+    <path d="M450 515C590 565 685 555 745 500" stroke="#F7C873"/>
+    <path d="M855 500C965 560 1080 565 1135 515" stroke="#FF7AB6"/>
+  </g>
+
+  <g font-family="Arial, Helvetica, sans-serif" text-anchor="middle" font-weight="800">
+    <g transform="translate(545 650)"><rect x="-100" y="-26" width="200" height="52" rx="18" fill="#13253B" stroke="#54E0B4"/><text y="7" font-size="16" fill="#BDF8E2">CONFIRMED</text></g>
+    <g transform="translate(755 650)"><rect x="-90" y="-26" width="180" height="52" rx="18" fill="#13253B" stroke="#65E6FF"/><text y="7" font-size="16" fill="#C6F8FF">REVISED</text></g>
+    <g transform="translate(955 650)"><rect x="-92" y="-26" width="184" height="52" rx="18" fill="#13253B" stroke="#F7C873"/><text y="7" font-size="16" fill="#FFE8AF">REVERSED</text></g>
+    <g transform="translate(1185 650)"><rect x="-116" y="-26" width="232" height="52" rx="18" fill="#13253B" stroke="#FF7AB6"/><text y="7" font-size="16" fill="#FFD2E5">INCONCLUSIVE</text></g>
+  </g>
+</svg>
