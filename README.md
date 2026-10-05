@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="skills/architecture-council/assets/icon.svg" alt="Architecture Council icon" width="112" height="112">
+  <img src="skills/architecture-council/assets/icon.png" alt="Architecture Council icon" width="112" height="112">
 </p>
 
 <h1 align="center">Architecture Council</h1>
@@ -14,7 +14,7 @@
 > **Product identity and provenance:** Architecture Council is maintained here as a first-party product identity and native ChatGPT Skill, while this GitHub repository is technically derived from the upstream fork source `0xNyk/council-of-high-intelligence`. The upstream copyright and MIT license are retained. The current repository intentionally diverges into the Architecture Council product model, including the professional council roles, ChatGPT Skill packaging, validation, outcome tracking, and repository-specific documentation. It is not presented as an unmodified upstream mirror. See `skills/architecture-council/NOTICE.md` and the bundled third-party license for attribution.
 
 <p align="center">
-  <img src="skills/architecture-council/assets/hero-council-3d.svg" alt="3D Architecture Council decision chamber with six professional reviewers, an independent chairman, and a central decision core" width="100%">
+  <img src="skills/architecture-council/assets/hero-council-3d.png" alt="3D Architecture Council decision chamber with six professional reviewers, an independent chairman, and a central decision core" width="100%">
 </p>
 
 Architecture Council turns consequential decisions into an explicit review process. It separates facts from assumptions, forces independent professional perspectives before synthesis, preserves dissent, applies a confidence-weighted recommendation threshold, records corrective protocol interventions when they are required, and converts the final verdict into an observable decision record with kill criteria and an outcome checkpoint.
@@ -47,7 +47,7 @@ The goal is not to maximize reviewer count. The goal is to expose a disagreement
 ## Professional review panel
 
 <p align="center">
-  <img src="skills/architecture-council/assets/review-panel-3d.svg" alt="3D professional review panel showing six independent decision lenses around a central council table and an elevated independent chairman" width="100%">
+  <img src="skills/architecture-council/assets/review-panel-3d.png" alt="3D professional review panel showing six independent decision lenses around a central council table and an elevated independent chairman" width="100%">
 </p>
 
 | Role | Primary decision lens |
@@ -63,7 +63,7 @@ The goal is not to maximize reviewer count. The goal is to expose a disagreement
 ## Decision flow
 
 <p align="center">
-  <img src="skills/architecture-council/assets/decision-flow-3d.svg" alt="3D decision flow from Decision Dossier through independent review, productive challenge, weighted verdict, and outcome checkpoint" width="100%">
+  <img src="skills/architecture-council/assets/decision-flow-3d.png" alt="3D decision flow from Decision Dossier through independent review, productive challenge, weighted verdict, and outcome checkpoint" width="100%">
 </p>
 
 1. Build and validate the Decision Dossier.
@@ -79,7 +79,7 @@ The goal is not to maximize reviewer count. The goal is to expose a disagreement
 ## Evidence and decision model
 
 <p align="center">
-  <img src="skills/architecture-council/assets/evidence-model-3d.svg" alt="3D evidence model showing facts, inferences, assumptions, and unknowns entering a weighted verdict chamber" width="100%">
+  <img src="skills/architecture-council/assets/evidence-model-3d.png" alt="3D evidence model showing facts, inferences, assumptions, and unknowns entering a weighted verdict chamber" width="100%">
 </p>
 
 Material claims are classified before deliberation:
@@ -102,7 +102,7 @@ Legacy Decision Records without `schema_version` remain valid as schema 1.0 reco
 ## Outcome tracking
 
 <p align="center">
-  <img src="skills/architecture-council/assets/outcome-loop-3d.svg" alt="3D outcome loop connecting a decision hypothesis to owner, review checkpoint, reversal evidence, kill criteria, and possible outcome states" width="100%">
+  <img src="skills/architecture-council/assets/outcome-loop-3d.png" alt="3D outcome loop connecting a decision hypothesis to owner, review checkpoint, reversal evidence, kill criteria, and possible outcome states" width="100%">
 </p>
 
 A verdict is treated as a testable hypothesis. Before execution, the decision record captures:
@@ -179,7 +179,7 @@ The distributable package is generated as `dist/skill.zip`.
 
 The repository uses vector-first documentation graphics with a consistent isometric 3D language. Long explanatory copy stays in Markdown rather than being baked into images. See [`docs/visual-system.md`](docs/visual-system.md) for the design and accessibility rules.
 
-A 1280 x 640 social preview asset is available at [`skills/architecture-council/assets/social-preview.svg`](skills/architecture-council/assets/social-preview.svg) for use in GitHub repository settings.
+A 1280 x 640 PNG publication asset is available at [`skills/architecture-council/assets/social-preview.png`](skills/architecture-council/assets/social-preview.png) for GitHub repository settings. The canonical vector source remains [`social-preview.svg`](skills/architecture-council/assets/social-preview.svg).
 
 ## Security
 
