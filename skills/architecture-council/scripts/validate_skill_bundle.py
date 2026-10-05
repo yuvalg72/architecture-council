@@ -21,12 +21,19 @@ REQUIRED_FILES = {
     "NOTICE.md",
     "agents/openai.yaml",
     "assets/icon.svg",
-    "assets/hero-council-3d.svg",
-    "assets/review-panel-3d.svg",
-    "assets/decision-flow-3d.svg",
-    "assets/evidence-model-3d.svg",
-    "assets/outcome-loop-3d.svg",
-    "assets/social-preview.svg",
+    "assets/icon.png",
+    "assets/source/hero-council-3d.svg",
+    "assets/hero-council-3d.png",
+    "assets/source/review-panel-3d.svg",
+    "assets/review-panel-3d.png",
+    "assets/source/decision-flow-3d.svg",
+    "assets/decision-flow-3d.png",
+    "assets/source/evidence-model-3d.svg",
+    "assets/evidence-model-3d.png",
+    "assets/source/outcome-loop-3d.svg",
+    "assets/outcome-loop-3d.png",
+    "assets/source/social-preview.svg",
+    "assets/social-preview.png",
     "LICENSES/council-of-high-intelligence-MIT.txt",
     "references/council-protocol.md",
     "references/reviewer-roles.md",
@@ -46,12 +53,12 @@ REQUIRED_FILES = {
 PLACEHOLDER_MARKERS = ("TO" + "DO", "example_" + "asset", "api_" + "reference.md")
 SVG_FILES = (
     "assets/icon.svg",
-    "assets/hero-council-3d.svg",
-    "assets/review-panel-3d.svg",
-    "assets/decision-flow-3d.svg",
-    "assets/evidence-model-3d.svg",
-    "assets/outcome-loop-3d.svg",
-    "assets/social-preview.svg",
+    "assets/source/hero-council-3d.svg",
+    "assets/source/review-panel-3d.svg",
+    "assets/source/decision-flow-3d.svg",
+    "assets/source/evidence-model-3d.svg",
+    "assets/source/outcome-loop-3d.svg",
+    "assets/source/social-preview.svg",
 )
 SECRET_PATTERNS = [
     re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
@@ -238,3 +245,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+

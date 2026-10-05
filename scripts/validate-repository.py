@@ -64,12 +64,12 @@ GENERIC_SECURITY_BOUNDARY = (
 )
 SVG_PATHS = (
     "skills/architecture-council/assets/icon.svg",
-    "skills/architecture-council/assets/hero-council-3d.svg",
-    "skills/architecture-council/assets/review-panel-3d.svg",
-    "skills/architecture-council/assets/decision-flow-3d.svg",
-    "skills/architecture-council/assets/evidence-model-3d.svg",
-    "skills/architecture-council/assets/outcome-loop-3d.svg",
-    "skills/architecture-council/assets/social-preview.svg",
+    "skills/architecture-council/assets/source/hero-council-3d.svg",
+    "skills/architecture-council/assets/source/review-panel-3d.svg",
+    "skills/architecture-council/assets/source/decision-flow-3d.svg",
+    "skills/architecture-council/assets/source/evidence-model-3d.svg",
+    "skills/architecture-council/assets/source/outcome-loop-3d.svg",
+    "skills/architecture-council/assets/source/social-preview.svg",
 )
 SKILL_README_HEADINGS = (
     "## What this Skill does",
@@ -182,8 +182,8 @@ def skill_readme_contract_errors(text: str, skill_dir: Path = SKILL) -> list[str
     for heading in SKILL_README_HEADINGS:
         if heading not in text:
             errors.append(f"Skill README missing required heading: {heading}")
-    if "assets/icon.svg" not in text:
-        errors.append("Skill README must reference assets/icon.svg")
+    if "assets/icon.png" not in image_targets(text):
+        errors.append("Skill README must render assets/icon.png")
     if "@architecture-council" not in text:
         errors.append("Skill README must include an exact @architecture-council invocation example")
     if "SKILL.md" not in text or "authoritative control-plane" not in text:
@@ -343,3 +343,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+

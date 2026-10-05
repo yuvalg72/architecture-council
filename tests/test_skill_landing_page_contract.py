@@ -22,6 +22,11 @@ class SkillLandingPageContractTests(unittest.TestCase):
     def test_current_skill_readme_satisfies_contract(self) -> None:
         self.assertEqual([], validator.skill_readme_contract_errors(self.readme))
 
+    def test_svg_publication_icon_fails(self) -> None:
+        mutated = self.readme.replace('src="assets/icon.png"', 'src="assets/icon.svg"', 1)
+        errors = validator.skill_readme_contract_errors(mutated)
+        self.assertTrue(any("render assets/icon.png" in error for error in errors))
+
     def test_missing_related_skills_heading_fails(self) -> None:
         mutated = self.readme.replace("## Related Skills", "## Local ecosystem", 1)
         errors = validator.skill_readme_contract_errors(mutated)
@@ -44,3 +49,4 @@ class SkillLandingPageContractTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+

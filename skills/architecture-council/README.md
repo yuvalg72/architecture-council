@@ -117,7 +117,9 @@ This repository contains one authoritative Skill, so there is no sibling Skill t
 | `VERSION` | Current Skill version |
 | `agents/openai.yaml` | Human-readable interface metadata and supported product configuration |
 | `assets/icon.png` | Local Skill icon and visual identity |
-| `assets/*-3d.svg` | Vector-first public documentation illustrations |
+| `assets/*.png` | PNG publication visuals |
+| `assets/source/*.svg` | Canonical vector sources for documentation visuals |
+| `assets/icon.svg` | Skill runtime icon source |
 | `references/` | Decision dossier, reviewer, protocol, security, output, and outcome-tracking rules loaded when needed |
 | `scripts/` | Deterministic validators for decision artifacts and the Skill bundle |
 | `tests/` | Regression and validation coverage for the Skill contract |
@@ -132,3 +134,4 @@ This repository contains one authoritative Skill, so there is no sibling Skill t
 - [Contributing guide](../../CONTRIBUTING.md)
 - [Skill changelog](CHANGELOG.md)
 - [Authoritative Skill definition](SKILL.md)
+
