@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/icon.svg" alt="Architecture Council icon" width="128" height="128">
+  <img src="assets/icon.png" alt="Architecture Council icon" width="128" height="128">
 </p>
 
 <h1 align="center">Architecture Council</h1>
@@ -63,7 +63,7 @@ Do not use it for simple factual lookups, routine formatting, low-cost reversibl
 11. Validate structured records with the bundled scripts when JSON artifacts are produced. New Decision Records use schema `1.1`; records without a schema version remain legacy-compatible as schema `1.0`.
 
 <p align="center">
-  <img src="assets/decision-flow-3d.svg" alt="3D Architecture Council workflow from Decision Dossier to outcome checkpoint" width="100%">
+  <img src="assets/decision-flow-3d.png" alt="3D Architecture Council workflow from Decision Dossier to outcome checkpoint" width="100%">
 </p>
 
 ## Expected output
@@ -116,8 +116,10 @@ This repository contains one authoritative Skill, so there is no sibling Skill t
 | `SKILL.md` | Authoritative trigger and execution instructions used by ChatGPT |
 | `VERSION` | Current Skill version |
 | `agents/openai.yaml` | Human-readable interface metadata and supported product configuration |
-| `assets/icon.svg` | Local Skill icon and visual identity |
-| `assets/*-3d.svg` | Vector-first public documentation illustrations |
+| `assets/icon.png` | Local Skill icon and visual identity |
+| `assets/*.png` | PNG publication visuals |
+| `assets/source/*.svg` | Canonical vector sources for documentation visuals |
+| `assets/icon.svg` | Skill runtime icon source |
 | `references/` | Decision dossier, reviewer, protocol, security, output, and outcome-tracking rules loaded when needed |
 | `scripts/` | Deterministic validators for decision artifacts and the Skill bundle |
 | `tests/` | Regression and validation coverage for the Skill contract |

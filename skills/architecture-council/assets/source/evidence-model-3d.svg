@@ -14,6 +14,7 @@
   <text x="76" y="76" font-family="Arial, Helvetica, sans-serif" font-size="38" font-weight="800" fill="#ECF8FF">Evidence before consensus</text>
   <text x="78" y="114" font-family="Arial, Helvetica, sans-serif" font-size="19" fill="#9FB4CB">Classify what is known before weighting what is preferred.</text>
 
+  <g transform="translate(50 20) scale(0.9)">
   <g font-family="Arial, Helvetica, sans-serif" text-anchor="middle" font-weight="800">
     <g transform="translate(175 238)"><polygon points="0,0 128,-62 256,0 128,66" fill="url(#fact)"/><polygon points="0,0 128,66 128,176 0,110" fill="#2C9A77"/><polygon points="256,0 128,66 128,176 256,110" fill="#1D6B54"/><text x="128" y="36" font-size="20" fill="#07111F">FACT</text></g>
     <g transform="translate(470 338)"><polygon points="0,0 128,-62 256,0 128,66" fill="url(#inf)"/><polygon points="0,0 128,66 128,176 0,110" fill="#1784A4"/><polygon points="256,0 128,66 128,176 256,110" fill="#0C5B7A"/><text x="128" y="36" font-size="20" fill="#07111F">INFERENCE</text></g>
@@ -38,4 +39,6 @@
     <path d="M430 575C650 560 760 520 850 470" stroke="#F7C873"/>
     <path d="M725 650C810 610 840 560 875 510" stroke="#FF7AB6"/>
   </g>
+  </g>
 </svg>
+
