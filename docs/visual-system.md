@@ -14,20 +14,20 @@ The core visual metaphor is an isometric decision chamber:
 - connecting lines represent evidence and challenge paths rather than hierarchy;
 - depth, glass, glow, and geometric surfaces create a consistent 3D language without relying on raster screenshots.
 
-## Vector-first rule
+## Vector source and PNG publication rule
 
-Public documentation illustrations use SVG as the authoritative format.
+Public documentation illustrations keep SVG as the canonical editable source, while GitHub-facing README and Skill landing-page presentation uses deterministic PNG derivatives.
 
-Do not reintroduce generated JPEG documentation cards for the main README. Raster output may be created for external platforms when a platform requires it, but the repository source remains vector-first.
+The source/publication split provides:
 
-Reasons:
+- reviewable vector source and accessible SVG metadata;
+- predictable GitHub rendering without direct SVG publication;
+- lossless deterministic PNG generation at governed dimensions;
+- SVG/PNG parity checks in CI;
+- HiDPI publication dimensions without stretching;
+- no fake vector wrappers for native raster assets.
 
-- sharp rendering at GitHub and Retina display sizes;
-- smaller diffs and easier review;
-- deterministic text placement;
-- accessible `<title>` and `<desc>` metadata;
-- no font-rendering drift from a Pillow environment;
-- no need for an automated image commit-back workflow.
+PNG derivatives are committed only when they are part of the reviewed documentation contract. The repository does not use an ongoing privileged image commit-back workflow.
 
 ## Text inside illustrations
 
@@ -63,15 +63,15 @@ Illustrations are not substitutes for documentation.
 
 ## Asset set
 
-| Asset | Purpose |
-|---|---|
-| `hero-council-3d.svg` | Primary README hero and visual identity |
-| `review-panel-3d.svg` | Professional review panel |
-| `decision-flow-3d.svg` | Deliberation workflow |
-| `evidence-model-3d.svg` | Evidence classification and weighted verdict model |
-| `outcome-loop-3d.svg` | Outcome tracking and kill-criteria loop |
-| `social-preview.svg` | 1280 x 640 repository social preview source |
-| `icon.svg` | Skill and repository icon |
+| Asset | Source | PNG publication | Purpose |
+|---|---|---|---|
+| Icon | `icon.svg` | `icon.png` | Skill and repository icon |
+| Hero | `hero-council-3d.svg` | `hero-council-3d.png` | Primary README hero |
+| Review panel | `review-panel-3d.svg` | `review-panel-3d.png` | Professional review panel |
+| Decision flow | `decision-flow-3d.svg` | `decision-flow-3d.png` | Deliberation workflow |
+| Evidence model | `evidence-model-3d.svg` | `evidence-model-3d.png` | Evidence and weighted-verdict model |
+| Outcome loop | `outcome-loop-3d.svg` | `outcome-loop-3d.png` | Outcome tracking and kill-criteria loop |
+| Social preview | `social-preview.svg` | `social-preview.png` | 1280 x 640 repository social preview |
 
 ## Accessibility
 
@@ -87,9 +87,7 @@ Do not encode essential instructions only in color. The adjacent text must expla
 
 ## Social preview
 
-`skills/architecture-council/assets/social-preview.svg` is the source asset for the GitHub social preview. GitHub repository settings require the preview image to be configured separately from the committed file.
-
-If GitHub requires a raster upload, export this SVG at 1280 x 640 without changing the composition.
+`skills/architecture-council/assets/social-preview.svg` is the canonical source for the GitHub social preview. The committed `social-preview.png` is the governed 1280 x 640 publication derivative used for raster upload. GitHub repository settings remain a separate configuration surface.
 
 ## Validation
 
