@@ -8,6 +8,8 @@ on:
       - "scripts/build-chatgpt-skill.py"
       - "scripts/validate-repository.py"
       - "CHATGPT.md"
+      - ".github/assets-manifest.json"
+      - "requirements-assets.txt"
       - ".github/workflows/validate-chatgpt-skill.yml"
   pull_request:
     branches: [main, develop]
@@ -16,6 +18,8 @@ on:
       - "scripts/build-chatgpt-skill.py"
       - "scripts/validate-repository.py"
       - "CHATGPT.md"
+      - ".github/assets-manifest.json"
+      - "requirements-assets.txt"
       - ".github/workflows/validate-chatgpt-skill.yml"
 
 permissions:
@@ -29,6 +33,10 @@ jobs:
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: "3.11"
+      - name: Install visual asset dependencies
+        run: python -m pip install --disable-pip-version-check -r requirements-assets.txt
+      - name: Validate local visual assets
+        run: python scripts/validate_assets.py
       - name: Validate repository
         run: python scripts/validate-repository.py
       - name: Validate and package native ChatGPT Skill
