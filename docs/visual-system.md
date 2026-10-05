@@ -101,4 +101,3 @@ Repository validation must fail when:
 - the Skill landing page is missing;
 - the required human-facing Skill README sections drift;
 - the README references a missing local image.
-
