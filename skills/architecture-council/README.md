@@ -134,4 +134,3 @@ This repository contains one authoritative Skill, so there is no sibling Skill t
 - [Contributing guide](../../CONTRIBUTING.md)
 - [Skill changelog](CHANGELOG.md)
 - [Authoritative Skill definition](SKILL.md)
-
