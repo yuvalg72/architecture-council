@@ -1,0 +1,89 @@
+{
+  "version": 1,
+  "assets": [
+    {
+      "id": "icon",
+      "published": "skills/architecture-council/assets/icon.png",
+      "kind": "vector",
+      "source": "skills/architecture-council/assets/icon.svg",
+      "expected_width": 256,
+      "expected_height": 256,
+      "display_width": 128,
+      "minimum_scale_factor": 2,
+      "allow_edge_contact": true,
+      "max_normalized_mae": 0.02
+    },
+    {
+      "id": "hero-council-3d",
+      "published": "skills/architecture-council/assets/hero-council-3d.png",
+      "kind": "vector",
+      "source": "skills/architecture-council/assets/source/hero-council-3d.svg",
+      "expected_width": 1600,
+      "expected_height": 900,
+      "display_width": 800,
+      "minimum_scale_factor": 2,
+      "allow_edge_contact": true,
+      "max_normalized_mae": 0.02
+    },
+    {
+      "id": "review-panel-3d",
+      "published": "skills/architecture-council/assets/review-panel-3d.png",
+      "kind": "vector",
+      "source": "skills/architecture-council/assets/source/review-panel-3d.svg",
+      "expected_width": 1600,
+      "expected_height": 760,
+      "display_width": 800,
+      "minimum_scale_factor": 2,
+      "allow_edge_contact": true,
+      "max_normalized_mae": 0.02
+    },
+    {
+      "id": "decision-flow-3d",
+      "published": "skills/architecture-council/assets/decision-flow-3d.png",
+      "kind": "vector",
+      "source": "skills/architecture-council/assets/source/decision-flow-3d.svg",
+      "expected_width": 1600,
+      "expected_height": 720,
+      "display_width": 800,
+      "minimum_scale_factor": 2,
+      "allow_edge_contact": true,
+      "max_normalized_mae": 0.02
+    },
+    {
+      "id": "evidence-model-3d",
+      "published": "skills/architecture-council/assets/evidence-model-3d.png",
+      "kind": "vector",
+      "source": "skills/architecture-council/assets/source/evidence-model-3d.svg",
+      "expected_width": 1600,
+      "expected_height": 760,
+      "display_width": 800,
+      "minimum_scale_factor": 2,
+      "allow_edge_contact": true,
+      "max_normalized_mae": 0.02
+    },
+    {
+      "id": "outcome-loop-3d",
+      "published": "skills/architecture-council/assets/outcome-loop-3d.png",
+      "kind": "vector",
+      "source": "skills/architecture-council/assets/source/outcome-loop-3d.svg",
+      "expected_width": 1600,
+      "expected_height": 720,
+      "display_width": 800,
+      "minimum_scale_factor": 2,
+      "allow_edge_contact": true,
+      "max_normalized_mae": 0.02
+    },
+    {
+      "id": "social-preview",
+      "published": "skills/architecture-council/assets/social-preview.png",
+      "kind": "vector",
+      "source": "skills/architecture-council/assets/source/social-preview.svg",
+      "expected_width": 1280,
+      "expected_height": 640,
+      "display_width": 640,
+      "minimum_scale_factor": 2,
+      "allow_edge_contact": true,
+      "max_normalized_mae": 0.02
+    }
+  ]
+}
