@@ -25,8 +25,9 @@ Reviewed on **2026-10-25** against `main` commit
 - Repository visibility: **public**; default branch: **`main`**; archived: **false**. A website/homepage URL is not configured in repository About; this is an optional field, not evidence of a product defect.
 
 The local product identity must not be mistaken for an unrelated clean-room implementation.
-The repository is technically forked from
-[`0xNyk/council-of-high-intelligence`](https://github.com/0xNyk/council-of-high-intelligence).
+The repository is technically forked from the upstream identified in the
+[README provenance notice](../README.md) and the GitHub fork-parent metadata.
+Refer to that notice for the exact upstream owner and name.
 
 ## Provenance and licensing
 
