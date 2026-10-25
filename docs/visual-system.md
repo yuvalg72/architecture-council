@@ -14,20 +14,13 @@ The core visual metaphor is an isometric decision chamber:
 - connecting lines represent evidence and challenge paths rather than hierarchy;
 - depth, glass, glow, and geometric surfaces create a consistent 3D language without relying on raster screenshots.
 
-## Vector-first rule
+## Canonical SVG sources and PNG publication
 
-Public documentation illustrations use SVG as the authoritative format.
+Public README and Skill documentation **publish lossless PNG derivatives** to ensure reliable GitHub rendering. Editable SVGs are the canonical design sources under `skills/architecture-council/assets/source/`; the runtime Skill icon also retains `assets/icon.svg`.
 
-Do not reintroduce generated JPEG documentation cards for the main README. Raster output may be created for external platforms when a platform requires it, but the repository source remains vector-first.
+Do not restore generated JPEG cards or link published documentation to SVG source files. Author and review SVGs, then generate their PNG counterparts using `python scripts/generate_assets.py` and validate source/output parity via `python scripts/validate_assets.py`.
 
-Reasons:
-
-- sharp rendering at GitHub and Retina display sizes;
-- smaller diffs and easier review;
-- deterministic text placement;
-- accessible `<title>` and `<desc>` metadata;
-- no font-rendering drift from a Pillow environment;
-- no need for an automated image commit-back workflow.
+This keeps reviewable vectors, consistent publication dimensions, useful Markdown alt text, and deterministic PNG output. Changes to editable sources must regenerate their corresponding published PNGs.
 
 ## Text inside illustrations
 
@@ -63,19 +56,21 @@ Illustrations are not substitutes for documentation.
 
 ## Asset set
 
-| Asset | Purpose |
-|---|---|
-| `hero-council-3d.svg` | Primary README hero and visual identity |
-| `review-panel-3d.svg` | Professional review panel |
-| `decision-flow-3d.svg` | Deliberation workflow |
-| `evidence-model-3d.svg` | Evidence classification and weighted verdict model |
-| `outcome-loop-3d.svg` | Outcome tracking and kill-criteria loop |
-| `social-preview.svg` | 1280 x 640 repository social preview source |
-| `icon.svg` | Skill and repository icon |
+| Published PNG | Canonical editable source | Purpose |
+|---|---|---|
+| `assets/hero-council-3d.png` | `assets/source/hero-council-3d.svg` | Primary README hero |
+| `assets/review-panel-3d.png` | `assets/source/review-panel-3d.svg` | Professional review panel |
+| `assets/decision-flow-3d.png` | `assets/source/decision-flow-3d.svg` | Deliberation workflow |
+| `assets/evidence-model-3d.png` | `assets/source/evidence-model-3d.svg` | Evidence classification and verdict model |
+| `assets/outcome-loop-3d.png` | `assets/source/outcome-loop-3d.svg` | Outcome tracking and kill criteria |
+| `assets/social-preview.png` | `assets/source/social-preview.svg` | 1280 x 640 GitHub social preview |
+| `assets/icon.png` | `assets/icon.svg` | Published Skill and repository icon |
+
+All paths in this table are relative to `skills/architecture-council/`. See the [asset manifest](../.github/assets-manifest.json) for dimensions, minimum publication scale, and validation limits.
 
 ## Accessibility
 
-Every SVG must include:
+Every canonical SVG source must include:
 
 - `role="img"`;
 - an `aria-labelledby` relationship;
@@ -83,7 +78,7 @@ Every SVG must include:
 - a useful `<desc>`;
 - meaningful alt text at the Markdown or HTML embedding point.
 
-Do not encode essential instructions only in color. The adjacent text must explain the model independently of the image.
+Every published PNG embedding must also have a meaningful, human-readable alt description. Do not encode essential instructions only in color. The adjacent text must explain the model independently of the image.
 
 ## Social preview
 
@@ -101,3 +96,4 @@ Repository validation must fail when:
 - the Skill landing page is missing;
 - the required human-facing Skill README sections drift;
 - the README references a missing local image.
+- a required PNG publication asset is missing, has incorrect dimensions, or drifts from its canonical SVG source.

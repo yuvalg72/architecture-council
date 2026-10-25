@@ -179,7 +179,11 @@ The distributable package is generated as `dist/skill.zip`.
 
 The repository uses vector-first documentation graphics with a consistent isometric 3D language. Long explanatory copy stays in Markdown rather than being baked into images. See [`docs/visual-system.md`](docs/visual-system.md) for the design and accessibility rules.
 
-A 1280 x 640 social preview asset is available at [`skills/architecture-council/assets/social-preview.svg`](skills/architecture-council/assets/social-preview.svg) for use in GitHub repository settings.
+A 1280 x 640 [PNG social preview](skills/architecture-council/assets/social-preview.png) is available for GitHub repository settings; its editable [SVG source](skills/architecture-council/assets/source/social-preview.svg) is retained separately.
+
+## Repository governance
+
+The [repository governance and adoption record](docs/repository-governance.md) documents verified purpose, maintenance state, naming, upstream provenance, licensing, visual publication, applicable controls, and outstanding manual checks. It tracks [Issue #19](https://github.com/yuvalg72/architecture-council/issues/19) without treating unverified settings as defects.
 
 ## Security
 
